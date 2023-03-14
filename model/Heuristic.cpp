@@ -17,10 +17,8 @@ Long Heuristic::getRank(State state) {
 
 Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
     std::bitset<64> bits(0);
-//    std::bitset<64> filter(7);
     for (int i = 0; i < ABSTRACT_SIZE; i++) {
         std::bitset<64> b(mapping[state[i]]);
-//        b &= filter;
         bits <<= 3;
         bits |= b;
     }
@@ -28,7 +26,25 @@ Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
 }
 
 void Heuristic::createPDB() {
-
+    //implementing BFS
+    std::queue<State *> queue;
+    auto *root = new State(new Short[ABSTRACT_SIZE]{0}
+            , new Short[NUMBER_OF_PEGS]{ABSTRACT_SIZE}
+            , ABSTRACT_SIZE);
+    queue.push(root);
+    PDB[getRank(*root)] = 0;
+    while (!queue.empty()) {
+        State *current = queue.front();
+        queue.pop();
+        Short currentRank = PDB[getRank(*current)];
+        for (auto &child: current->getChildren()) {
+            Long childRank = getRank(*child);
+            if (PDB.find(childRank) == PDB.end()) {
+                PDB[childRank] = currentRank + 1;
+                queue.push(child);
+            }
+        }
+    }
 }
 
 Heuristic::Heuristic() {

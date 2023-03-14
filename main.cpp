@@ -3,7 +3,7 @@
 
 int main() {
     Heuristic heuristic;
-    State* root = new State(new Short[ABSTRACT_SIZE]{0}
+    auto* root = new State(new Short[ABSTRACT_SIZE]{0}
         , new Short[NUMBER_OF_PEGS]{ABSTRACT_SIZE}
         , ABSTRACT_SIZE);
     for (auto &i : root->getChildren()) {
