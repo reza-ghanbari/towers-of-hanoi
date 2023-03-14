@@ -6,6 +6,7 @@
 #define TOWERS_OF_HANOI_SOLVER_STATE_H
 
 #include <vector>
+#include <iostream>
 #include "../utils/Types.h"
 #include "../utils/Constants.h"
 
@@ -29,6 +30,7 @@ public:
     std::vector<State *> getChildren();
     [[nodiscard]] int getNumberOfPegsWithDisks() const;
     [[nodiscard]] State * generateChildState(int diskNumber, int targetPeg) const;
+    void printState() const;
 };
 
 

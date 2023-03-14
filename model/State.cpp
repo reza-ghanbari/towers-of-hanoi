@@ -10,6 +10,7 @@ int State::isGoal() {
 
 State::~State() {
     delete[] state;
+    delete[] numberOfDisksInPegs;
 }
 
 Short *State::getState() const {
@@ -51,6 +52,7 @@ std::vector<State*> State::getChildren() {
             }
         }
     }
+    delete evaluatedPegs;
     return children;
 }
 
@@ -72,4 +74,15 @@ int State::getNumberOfPegsWithDisks() const {
         if (numberOfDisksInPegs[i] > 0)
             numberOfPegsWithDisks++;
     return numberOfPegsWithDisks;
+}
+
+void State::printState() const {
+    for (int i = 0; i < totalNumberOfDisks; ++i) {
+        std::cout << unsigned(state[i]) << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
+        std::cout << unsigned(numberOfDisksInPegs[i]) << " ";
+    }
+    std::cout << std::endl;
 }
