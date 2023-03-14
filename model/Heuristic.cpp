@@ -6,24 +6,24 @@
 
 Long Heuristic::getRank(State state) {
     Short * numberOfDisksInPegs = state.getNumberOfDisksInPegs();
-    Short mapping[NUMBER_OF_PEGS] = {0, 1, 2, 3, 4};
+    Short mapping[NUMBER_OF_PEGS];
+    for (int i = 0; i < NUMBER_OF_PEGS; ++i)
+        mapping[i] = i;
     getMappingForSymmetry(mapping, numberOfDisksInPegs);
     Long rank = convertStateToInt(state.getState(), mapping);
-    std::cout << std::endl;
     return rank;
 }
 
 
 Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
     std::bitset<64> bits(0);
-    std::bitset<64> filter(7);
+//    std::bitset<64> filter(7);
     for (int i = 0; i < ABSTRACT_SIZE; i++) {
         std::bitset<64> b(mapping[state[i]]);
-        b &= filter;
+//        b &= filter;
         bits <<= 3;
         bits |= b;
     }
-    std::cout << bits << std::endl;
     return bits.to_ulong();
 }
 
