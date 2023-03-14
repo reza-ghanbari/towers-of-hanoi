@@ -5,8 +5,10 @@
 #ifndef TOWERS_OF_HANOI_SOLVER_STATE_H
 #define TOWERS_OF_HANOI_SOLVER_STATE_H
 
+#include <vector>
 #include "../utils/Types.h"
 #include "../utils/Constants.h"
+
 
 class State {
 private:
@@ -24,6 +26,9 @@ public:
     int isGoal();
     void moveDisk(int diskNumber, int toPeg);
     Short* getNumberOfDisksInPegs();
+    std::vector<State *> getChildren();
+    [[nodiscard]] int getNumberOfPegsWithDisks() const;
+    [[nodiscard]] State * generateChildState(int diskNumber, int targetPeg) const;
 };
 
 
