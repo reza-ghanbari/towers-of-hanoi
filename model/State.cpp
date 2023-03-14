@@ -12,7 +12,7 @@ State::~State() {
     delete[] state;
 }
 
-Short *State::getState() {
+Short *State::getState() const {
     return state;
 }
 
@@ -29,7 +29,7 @@ void State::moveDisk(int diskNumber, int toPeg) {
     state[diskNumber] = toPeg;
 }
 
-Short *State::getNumberOfDisksInPegs() {
+Short *State::getNumberOfDisksInPegs() const {
     return numberOfDisksInPegs;
 }
 

@@ -22,10 +22,10 @@ public:
         , numberOfDisksInPegs(numberOfDisksInPegs)
         , totalNumberOfDisks(totalNumberOfDisks) {}
     ~State();
-    Short* getState();
+    Short* getState() const;
     int isGoal();
     void moveDisk(int diskNumber, int toPeg);
-    Short* getNumberOfDisksInPegs();
+    Short* getNumberOfDisksInPegs() const;
     std::vector<State *> getChildren();
     [[nodiscard]] int getNumberOfPegsWithDisks() const;
     [[nodiscard]] State * generateChildState(int diskNumber, int targetPeg) const;

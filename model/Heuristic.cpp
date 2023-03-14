@@ -4,13 +4,13 @@
 
 #include "../inc/Heuristic.h"
 
-Long Heuristic::getRank(State state) {
-    Short * numberOfDisksInPegs = state.getNumberOfDisksInPegs();
+Long Heuristic::getRank(const State* state) {
+    Short * numberOfDisksInPegs = state->getNumberOfDisksInPegs();
     Short mapping[NUMBER_OF_PEGS];
     for (int i = 0; i < NUMBER_OF_PEGS; ++i)
         mapping[i] = i;
     getMappingForSymmetry(mapping, numberOfDisksInPegs);
-    Long rank = convertStateToInt(state.getState(), mapping);
+    Long rank = convertStateToInt(state->getState(), mapping);
     return rank;
 }
 
@@ -26,19 +26,18 @@ Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
 }
 
 void Heuristic::createPDB() {
-    //implementing BFS
     std::queue<State *> queue;
     auto *root = new State(new Short[ABSTRACT_SIZE]{0}
             , new Short[NUMBER_OF_PEGS]{ABSTRACT_SIZE}
             , ABSTRACT_SIZE);
     queue.push(root);
-    PDB[getRank(*root)] = 0;
+    PDB[getRank(root)] = 0;
     while (!queue.empty()) {
         State *current = queue.front();
         queue.pop();
-        Short currentRank = PDB[getRank(*current)];
+        Short currentRank = PDB[getRank(current)];
         for (auto &child: current->getChildren()) {
-            Long childRank = getRank(*child);
+            Long childRank = getRank(child);
             if (PDB.find(childRank) == PDB.end()) {
                 PDB[childRank] = currentRank + 1;
                 queue.push(child);
@@ -47,11 +46,20 @@ void Heuristic::createPDB() {
     }
 }
 
+void Heuristic::saveToFile() {
+    std::ofstream file;
+    file.open("pdb.txt");
+    for (auto &i : PDB) {
+        file << i.first << " " << i.second << std::endl;
+    }
+    file.close();
+}
+
 Heuristic::Heuristic() {
     createPDB();
 }
 
-Long Heuristic::getHeuristicValue(const State& state) {
+Long Heuristic::getHeuristicValue(const State* state) {
     return this->PDB[getRank(state)];
 }
 

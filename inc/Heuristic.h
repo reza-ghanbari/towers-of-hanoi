@@ -21,8 +21,9 @@ private:
     Long convertStateToInt(Short state[], Short mapping[]);
 public:
     Heuristic();
-    Long getRank(State state);
-    Long getHeuristicValue(const State& state);
+    Long getRank(const State* state);
+    void saveToFile();
+    Long getHeuristicValue(const State *state);
 };
 
 
