@@ -14,6 +14,19 @@ Long Heuristic::getRank(const State* state) {
     return rank;
 }
 
+State* Heuristic::getUnrankedState(Long rank) {
+    std::bitset<64> bits(rank);
+    Short* state = new Short[ABSTRACT_SIZE];
+    for (int i = ABSTRACT_SIZE - 1; i >= 0; --i) {
+        state[i] = bits.to_ulong() & 7;
+        bits >>= 3;
+    }
+    Short* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
+    for (int i = 0; i < ABSTRACT_SIZE; ++i)
+        numberOfDisksInPegs[state[i]]++;
+    return new State(state, numberOfDisksInPegs, ABSTRACT_SIZE);
+}
+
 
 Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
     std::bitset<64> bits(0);
@@ -26,23 +39,31 @@ Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
 }
 
 void Heuristic::createPDB() {
-    std::queue<State *> queue;
-    auto *root = new State(new Short[ABSTRACT_SIZE]{0}
-            , new Short[NUMBER_OF_PEGS]{ABSTRACT_SIZE}
+    std::queue<Long> queue;
+    Short* goalState = new Short[ABSTRACT_SIZE]{0};
+    for (int i = 0; i < ABSTRACT_SIZE; ++i)
+        goalState[i] = NUMBER_OF_PEGS - 1;
+    Short* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
+    goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = ABSTRACT_SIZE;
+    auto *root = new State(goalState
+            , goalNumberOfDisksInPegs
             , ABSTRACT_SIZE);
-    queue.push(root);
+    queue.push(getRank(root));
     PDB[getRank(root)] = 0;
     while (!queue.empty()) {
-        State *current = queue.front();
+        State *current = getUnrankedState(queue.front());
         queue.pop();
         Short currentRank = PDB[getRank(current)];
         for (auto &child: current->getChildren()) {
             Long childRank = getRank(child);
-            if (PDB.find(childRank) == PDB.end()) {
+            auto entry = PDB.find(childRank);
+            if (entry == PDB.end() || (entry->second > currentRank + 1)) {
                 PDB[childRank] = currentRank + 1;
-                queue.push(child);
+                queue.push(childRank);
             }
+            delete child;
         }
+        delete current;
     }
 }
 
@@ -50,7 +71,7 @@ void Heuristic::saveToFile() {
     std::ofstream file;
     file.open("pdb.txt");
     for (auto &i : PDB) {
-        file << i.first << " " << i.second << std::endl;
+        file << i.first << " " << unsigned(i.second) << std::endl;
     }
     file.close();
 }
@@ -68,23 +89,23 @@ void Heuristic::getMappingForSymmetry(Short *mapping, const Short *numberOfDisks
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
         temp[i] = numberOfDisksInPegs[i];
     }
-    if (temp[0] > temp[1]) {
+    if (temp[0] < temp[1]) {
         std::swap(temp[0], temp[1]);
         std::swap(mapping[0], mapping[1]);
     }
-    if (temp[2] > temp[3]) {
+    if (temp[2] < temp[3]) {
         std::swap(temp[2], temp[3]);
         std::swap(mapping[2], mapping[3]);
     }
-    if (temp[0] > temp[2]) {
+    if (temp[0] < temp[2]) {
         std::swap(temp[0], temp[2]);
         std::swap(mapping[0], mapping[2]);
     }
-    if (temp[1] > temp[3]) {
+    if (temp[1] < temp[3]) {
         std::swap(temp[1], temp[3]);
         std::swap(mapping[1], mapping[3]);
     }
-    if (temp[1] > temp[2]) {
+    if (temp[1] < temp[2]) {
         std::swap(temp[1], temp[2]);
         std::swap(mapping[1], mapping[2]);
     }

@@ -24,6 +24,7 @@ public:
     Long getRank(const State* state);
     void saveToFile();
     Long getHeuristicValue(const State *state);
+    State *getUnrankedState(Long rank);
 };
 
 
