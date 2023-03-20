@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-const int TOWER_SIZE = 18;
+const int TOWER_SIZE = 16;
 const int NUMBER_OF_PEGS = 5;
 const int ABSTRACT_SIZE = 12;
 
