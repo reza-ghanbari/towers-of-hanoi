@@ -62,21 +62,12 @@ void Heuristic::createPDB() {
             , ABSTRACT_SIZE);
     Long rootRank = getRank(root);
     queue.push(rootRank);
-//    std::cout << "root " << std::endl;
-//    root->printState();
-//    std::cout << unsigned(rootRank) << std::endl;
-//    std::cout << "end of root" << std::endl;
     PDB[rootRank] = 0;
     while (!queue.empty()) {
-//        std::cout << "queue size " << queue.size() << std::endl;
         Long currentRank = queue.front();
-//        std::cout << "current rank " << currentRank << std::endl;
         State *current = getUnrankedState(currentRank);
-//        current->printState();
         queue.pop();
-//        if (PDB[currentRank] == 0) std::cout << "children of current" << std::endl;
         for (auto &child: current->getChildren()) {
-//            if (PDB[currentRank] == 0) child->printState();
             Long childRank = getRank(child);
             auto entry = PDB.find(childRank);
             if (entry == PDB.end() || (entry->second > PDB[currentRank] + 1)) {
@@ -85,7 +76,6 @@ void Heuristic::createPDB() {
             }
             delete child;
         }
-//        if (PDB[currentRank] == 0) std::cout << "end of children of current" << std::endl;
         delete current;
     }
 }
