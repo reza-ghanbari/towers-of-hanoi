@@ -8,12 +8,23 @@
 
 #include "Heuristic.h"
 
+class CompareStates {
+public:
+    bool operator()(const State *lhs, const State *rhs) const {
+        return lhs->getCost() > rhs->getCost();
+    }
+};
+
 class Solver {
 private:
-    State* root;
-    Heuristic *heuristic;
+    State *root;
+    Heuristic<Long> *longHeuristic;
+    Heuristic<SmallInt> *shortHeuristic;
+    State* generateState(Short* state, int numberOfDisks);
+    Short getHCost(State *state);
 public:
-    Solver(State* root, Heuristic *heuristic): heuristic(heuristic), root(root) {};
+    Solver(State *root, Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic)
+        : longHeuristic(longHeuristic), shortHeuristic(shortHeuristic), root(root) {};
     void solve();
 };
 
