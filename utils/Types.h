@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 typedef uint8_t Short;
+typedef uint16_t SmallInt;
 typedef uint64_t Long;
 
 #endif //TOWERS_OF_HANOI_SOLVER_TYPES_H
