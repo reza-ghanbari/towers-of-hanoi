@@ -65,13 +65,6 @@ State* State::generateChildState(int diskNumber, int targetPeg) const {
     std::copy(state, state + totalNumberOfDisks, newState);
     std::copy(numberOfDisksInPegs, numberOfDisksInPegs + NUMBER_OF_PEGS, newNumberOfDisksInPegs);
     std::copy(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, newTopDiskInPegs);
-//    for (int k = 0; k < totalNumberOfDisks; ++k)
-//        newState[k] = state[k];
-//
-//    for (int k = 0; k < NUMBER_OF_PEGS; ++k) {
-//        newNumberOfDisksInPegs[k] = numberOfDisksInPegs[k];
-//        newTopDiskInPegs[k] = topDiskInPegs[k];
-//    }
     auto* child = new State(newState, newNumberOfDisksInPegs, newTopDiskInPegs, totalNumberOfDisks);
     child->moveDisk(diskNumber, targetPeg);
     return child;

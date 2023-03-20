@@ -18,6 +18,8 @@ private:
     Short* numberOfDisksInPegs;
     Short* topDiskInPegs; // topDiskInPegs[i] = disk number of the top disk in peg i, totalNumberOfDisks if peg is empty
     int totalNumberOfDisks;
+    int gCost;
+    int hCost;
     bool isLegalMove(int diskNumber, int toPeg);
 public:
     State(Short* state, Short* numberOfDisksInPegs, Short* topDiskInPegs, int totalNumberOfDisks)
@@ -28,6 +30,9 @@ public:
     ~State();
     Short* getState() const;
     int isGoal();
+    void setGCost(int cost) { this->gCost = cost; };
+    void setHCost(int cost) { this->hCost = cost; };
+    int getCost() const { return gCost + hCost; };
     void moveDisk(int diskNumber, int toPeg);
     Short* getNumberOfDisksInPegs() const;
     Short* getTopDiskInPegs() const;
