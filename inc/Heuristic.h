@@ -5,7 +5,6 @@
 #ifndef TOWERS_OF_HANOI_SOLVER_HEURISTIC_H
 #define TOWERS_OF_HANOI_SOLVER_HEURISTIC_H
 
-#include <bitset>
 #include <bits/stdc++.h>
 
 #include "../utils/Types.h"
@@ -19,7 +18,7 @@ private:
     int numberOfDisks;
     void createPDB();
     static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
-    Long convertStateToInt(Short state[], Short mapping[]);
+    T convertStateToInt(const Short state[], const Short mapping[]);
 public:
     explicit Heuristic(int numberOfDisks);
     T getRank(const State* state);

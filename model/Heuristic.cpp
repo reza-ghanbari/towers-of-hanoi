@@ -41,14 +41,13 @@ State* Heuristic<T>::getUnrankedState(T rank) {
 }
 
 template <typename T>
-Long Heuristic<T>::convertStateToInt(Short state[], Short mapping[]) {
-    std::bitset<64> bits(0);
+T Heuristic<T>::convertStateToInt(const Short state[], const Short mapping[]) {
+    T bits = 0;
     for (int i = 0; i <= numberOfDisks - 1; i++) {
-        std::bitset<64> b(mapping[state[i]]);
         bits <<= 3;
-        bits |= b;
+        bits |= mapping[state[i]];
     }
-    return bits.to_ulong();
+    return bits;
 }
 
 template <typename T>
