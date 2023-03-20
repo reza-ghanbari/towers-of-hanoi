@@ -53,7 +53,7 @@ Long Heuristic<T>::convertStateToInt(Short state[], Short mapping[]) {
 
 template <typename T>
 void Heuristic<T>::createPDB() {
-    std::queue<Long> queue;
+    std::queue<T> queue;
     auto* goalState = new Short[numberOfDisks]{0};
     for (int i = 0; i <= numberOfDisks - 1; ++i)
         goalState[i] = NUMBER_OF_PEGS - 1;
@@ -66,15 +66,15 @@ void Heuristic<T>::createPDB() {
             , goalNumberOfDisksInPegs
             , topDiskInPegs
             , numberOfDisks);
-    Long rootRank = getRank(root);
+    T rootRank = getRank(root);
     queue.push(rootRank);
     PDB[rootRank] = 0;
     while (!queue.empty()) {
-        Long currentRank = queue.front();
+        T currentRank = queue.front();
         State *current = getUnrankedState(currentRank);
         queue.pop();
         for (auto &child: current->getChildren()) {
-            Long childRank = getRank(child);
+            T childRank = getRank(child);
             auto entry = PDB.find(childRank);
             if (entry == PDB.end() || (entry->second > PDB[currentRank] + 1)) {
                 PDB[childRank] = PDB[currentRank] + 1;
@@ -103,8 +103,8 @@ Heuristic<T>::Heuristic(int numberOfDisks) {
 }
 
 template <typename T>
-Short Heuristic<T>::getHeuristicValue(const State* state) {
-    return this->PDB[getRank(state)];
+Short Heuristic<T>::getHeuristicValue(T rank) {
+    return this->PDB[rank];
 }
 
 template <typename T>
