@@ -18,13 +18,14 @@ private:
     int numberOfDisks;
     void createPDB();
     static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
-    T convertStateToInt(const Short state[], const Short mapping[]);
 public:
+    T convertStateToInt(const Short state[], const Short mapping[]);
     explicit Heuristic(int numberOfDisks);
     T getRank(const State* state);
     void saveToFile(std::string fileName);
     Short getHeuristicValue(T rank);
     State *getUnrankedState(T rank);
+    Short getHeuristicValue(State *state);
 };
 
 

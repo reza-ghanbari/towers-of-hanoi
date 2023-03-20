@@ -107,6 +107,11 @@ Short Heuristic<T>::getHeuristicValue(T rank) {
 }
 
 template <typename T>
+Short Heuristic<T>::getHeuristicValue(State *state) {
+    return this->PDB[getRank(state)];
+}
+
+template <typename T>
 void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
     auto *temp = new Short[NUMBER_OF_PEGS - 1];
     auto *tempTopDiskInPegs = new Short[NUMBER_OF_PEGS - 1];
