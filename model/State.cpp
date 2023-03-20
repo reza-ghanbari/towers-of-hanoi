@@ -11,6 +11,7 @@ int State::isGoal() {
 State::~State() {
     delete[] state;
     delete[] numberOfDisksInPegs;
+    delete[] topDiskInPegs;
 }
 
 Short *State::getState() const {
@@ -18,15 +19,24 @@ Short *State::getState() const {
 }
 
 bool State::isLegalMove(int diskNumber, int toPeg) {
-    for (int i = 0; i < diskNumber; ++i)
-        if (state[i] == toPeg)
-            return false;
-    return true;
+    Short topDiskInTargetPeg = topDiskInPegs[toPeg];
+    return topDiskInTargetPeg == totalNumberOfDisks || topDiskInTargetPeg >= diskNumber; // there is a condition diskNumber == topDiskInPegs[state[diskNumber]] but it is redundant because we check this in the for loop
 }
 
 void State::moveDisk(int diskNumber, int toPeg) {
-    numberOfDisksInPegs[state[diskNumber]]--;
+    Short fromPeg = state[diskNumber];
+    numberOfDisksInPegs[fromPeg]--;
     numberOfDisksInPegs[toPeg]++;
+    topDiskInPegs[toPeg] = diskNumber;
+    if (diskNumber == totalNumberOfDisks - 1) {
+        topDiskInPegs[fromPeg] = totalNumberOfDisks;
+    }
+    for (int i = diskNumber + 1; i < totalNumberOfDisks; ++i) {
+        if (state[i] == fromPeg) {
+            topDiskInPegs[fromPeg] = i;
+            break;
+        }
+    }
     state[diskNumber] = toPeg;
 }
 
@@ -36,34 +46,33 @@ Short *State::getNumberOfDisksInPegs() const {
 
 std::vector<State*> State::getChildren() {
     std::vector<State*> children;
-    int* evaluatedPegs = new int(NUMBER_OF_PEGS);
-    for (int i = 0; i < NUMBER_OF_PEGS; ++i)
-        evaluatedPegs[i] = 0;
-    int numberOfEvaluatedPegs = 0;
-    int numberOfPegsWithDisks = getNumberOfPegsWithDisks();
-    for (int i = 0; i < totalNumberOfDisks && numberOfEvaluatedPegs < numberOfPegsWithDisks; ++i) {
-        if (evaluatedPegs[state[i]] == 0) {
-            evaluatedPegs[state[i]] = 1;
-            numberOfEvaluatedPegs++;
-            for (int j = 0; j < NUMBER_OF_PEGS; ++j) {
-                if (j != state[i] && isLegalMove(i, j)) {
-                    children.push_back(generateChildState(i, j));
-                }
+    for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
+        if (topDiskInPegs[i] == totalNumberOfDisks)
+            continue;
+        for (int j = 0; j < NUMBER_OF_PEGS; ++j) {
+            if (i != j && isLegalMove(topDiskInPegs[i], j)) {
+                children.push_back(generateChildState(topDiskInPegs[i], j));
             }
         }
     }
-    delete evaluatedPegs;
     return children;
 }
 
 State* State::generateChildState(int diskNumber, int targetPeg) const {
     auto* newState = new Short[totalNumberOfDisks];
     auto* newNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS];
-    for (int k = 0; k < totalNumberOfDisks; ++k)
-        newState[k] = state[k];
-    for (int k = 0; k < NUMBER_OF_PEGS; ++k)
-        newNumberOfDisksInPegs[k] = numberOfDisksInPegs[k];
-    auto* child = new State(newState, newNumberOfDisksInPegs, totalNumberOfDisks);
+    auto* newTopDiskInPegs = new Short[NUMBER_OF_PEGS];
+    std::copy(state, state + totalNumberOfDisks, newState);
+    std::copy(numberOfDisksInPegs, numberOfDisksInPegs + NUMBER_OF_PEGS, newNumberOfDisksInPegs);
+    std::copy(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, newTopDiskInPegs);
+//    for (int k = 0; k < totalNumberOfDisks; ++k)
+//        newState[k] = state[k];
+//
+//    for (int k = 0; k < NUMBER_OF_PEGS; ++k) {
+//        newNumberOfDisksInPegs[k] = numberOfDisksInPegs[k];
+//        newTopDiskInPegs[k] = topDiskInPegs[k];
+//    }
+    auto* child = new State(newState, newNumberOfDisksInPegs, newTopDiskInPegs, totalNumberOfDisks);
     child->moveDisk(diskNumber, targetPeg);
     return child;
 }
@@ -77,12 +86,23 @@ int State::getNumberOfPegsWithDisks() const {
 }
 
 void State::printState() const {
+    std::cout << "State" << std::endl;
     for (int i = 0; i < totalNumberOfDisks; ++i) {
         std::cout << unsigned(state[i]) << " ";
     }
     std::cout << std::endl;
+    std::cout << "Number of disks in pegs: ";
     for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
         std::cout << unsigned(numberOfDisksInPegs[i]) << " ";
     }
     std::cout << std::endl;
+    std::cout << "Top disks: ";
+    for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
+        std::cout << ((topDiskInPegs[i] == totalNumberOfDisks) ? "-1" : std::to_string(unsigned(topDiskInPegs[i]))) << " ";
+    }
+    std::cout << "\n---------------" << std::endl;
+}
+
+Short *State::getTopDiskInPegs() const {
+    return topDiskInPegs;
 }

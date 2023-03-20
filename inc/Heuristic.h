@@ -17,7 +17,7 @@ class Heuristic {
 private:
     std::unordered_map<Long, Short> PDB;
     void createPDB();
-    static void getMappingForSymmetry(uint8_t *mapping, const uint8_t *numberOfDisksInPegs);
+    static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
     Long convertStateToInt(Short state[], Short mapping[]);
 public:
     Heuristic();
