@@ -12,19 +12,20 @@
 #include "../utils/Constants.h"
 #include "State.h"
 
-
+template <typename T>
 class Heuristic {
 private:
-    std::unordered_map<Long, Short> PDB;
+    std::unordered_map<T, Short> PDB;
+    int numberOfDisks;
     void createPDB();
     static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
     Long convertStateToInt(Short state[], Short mapping[]);
 public:
-    Heuristic();
-    Long getRank(const State* state);
-    void saveToFile();
-    Long getHeuristicValue(const State *state);
-    State *getUnrankedState(Long rank);
+    Heuristic(int numberOfDisks);
+    T getRank(const State* state);
+    void saveToFile(std::string fileName);
+    Short getHeuristicValue(const State *state);
+    State *getUnrankedState(T rank);
 };
 
 

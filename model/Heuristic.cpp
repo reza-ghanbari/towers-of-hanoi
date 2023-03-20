@@ -4,7 +4,11 @@
 
 #include "../inc/Heuristic.h"
 
-Long Heuristic::getRank(const State* state) {
+template class Heuristic<Long>;
+template class Heuristic<SmallInt>;
+
+template <typename T>
+T Heuristic<T>::getRank(const State* state) {
     Short * numberOfDisksInPegs = state->getNumberOfDisksInPegs();
     Short* topDiskInPegs = state->getTopDiskInPegs();
     Short mapping[NUMBER_OF_PEGS];
@@ -15,30 +19,31 @@ Long Heuristic::getRank(const State* state) {
     return rank;
 }
 
-State* Heuristic::getUnrankedState(Long rank) {
+template <typename T>
+State* Heuristic<T>::getUnrankedState(T rank) {
     std::bitset<64> bits(rank);
-    auto* state = new Short[ABSTRACT_SIZE];
+    auto* state = new Short[numberOfDisks];
     auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
     auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
     for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
-        topDiskInPegs[i] = ABSTRACT_SIZE;
+        topDiskInPegs[i] = numberOfDisks;
     }
-    for (int i = ABSTRACT_SIZE - 1; i >= 0; --i) {
+    for (int i = numberOfDisks - 1; i >= 0; --i) {
         state[i] = bits.to_ulong() & 7;
         bits >>= 3;
     }
-    for (int i = 0; i < ABSTRACT_SIZE; ++i) {
+    for (int i = 0; i <= numberOfDisks - 1; ++i) {
         numberOfDisksInPegs[state[i]]++;
-        if (topDiskInPegs[state[i]] == ABSTRACT_SIZE)
+        if (topDiskInPegs[state[i]] == numberOfDisks)
             topDiskInPegs[state[i]] = i;
     }
-    return new State(state, numberOfDisksInPegs, topDiskInPegs, ABSTRACT_SIZE);
+    return new State(state, numberOfDisksInPegs, topDiskInPegs, numberOfDisks);
 }
 
-
-Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
+template <typename T>
+Long Heuristic<T>::convertStateToInt(Short state[], Short mapping[]) {
     std::bitset<64> bits(0);
-    for (int i = 0; i < ABSTRACT_SIZE; i++) {
+    for (int i = 0; i <= numberOfDisks - 1; i++) {
         std::bitset<64> b(mapping[state[i]]);
         bits <<= 3;
         bits |= b;
@@ -46,20 +51,21 @@ Long Heuristic::convertStateToInt(Short state[], Short mapping[]) {
     return bits.to_ulong();
 }
 
-void Heuristic::createPDB() {
+template <typename T>
+void Heuristic<T>::createPDB() {
     std::queue<Long> queue;
-    Short* goalState = new Short[ABSTRACT_SIZE]{0};
-    for (int i = 0; i < ABSTRACT_SIZE; ++i)
+    auto* goalState = new Short[numberOfDisks]{0};
+    for (int i = 0; i <= numberOfDisks - 1; ++i)
         goalState[i] = NUMBER_OF_PEGS - 1;
-    Short* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    Short* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
+    auto* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
+    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i)
-        topDiskInPegs[i] = ABSTRACT_SIZE;
-    goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = ABSTRACT_SIZE;
+        topDiskInPegs[i] = numberOfDisks;
+    goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = numberOfDisks;
     auto *root = new State(goalState
             , goalNumberOfDisksInPegs
             , topDiskInPegs
-            , ABSTRACT_SIZE);
+            , numberOfDisks);
     Long rootRank = getRank(root);
     queue.push(rootRank);
     PDB[rootRank] = 0;
@@ -80,24 +86,29 @@ void Heuristic::createPDB() {
     }
 }
 
-void Heuristic::saveToFile() {
+template <typename T>
+void Heuristic<T>::saveToFile(std::string fileName) {
     std::ofstream file;
-    file.open("pdb.txt");
+    file.open(fileName);
     for (auto &i : PDB) {
         file << i.first << " " << unsigned(i.second) << std::endl;
     }
     file.close();
 }
 
-Heuristic::Heuristic() {
+template <typename T>
+Heuristic<T>::Heuristic(int numberOfDisks) {
+    this->numberOfDisks = numberOfDisks;
     createPDB();
 }
 
-Long Heuristic::getHeuristicValue(const State* state) {
+template <typename T>
+Short Heuristic<T>::getHeuristicValue(const State* state) {
     return this->PDB[getRank(state)];
 }
 
-void Heuristic::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
+template <typename T>
+void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
     auto *temp = new Short[NUMBER_OF_PEGS - 1];
     auto *tempTopDiskInPegs = new Short[NUMBER_OF_PEGS - 1];
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
