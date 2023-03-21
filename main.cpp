@@ -22,7 +22,7 @@ int main() {
     std::cout << "pdb creating started..." << std::endl;
     auto start = std::chrono::steady_clock::now();
     auto* heuristic = new Heuristic<Long>(ABSTRACT_SIZE, "pdb-long.txt");
-    auto* smallHeuristic = new Heuristic<SmallInt>(TOWER_SIZE - ABSTRACT_SIZE, "pdb-short.txt");
+    auto* smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short.txt");
     auto end = std::chrono::steady_clock::now();
     std::cout << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "s" << std::endl;
     std::cout << "solving started..." << std::endl;

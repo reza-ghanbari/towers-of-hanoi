@@ -74,8 +74,7 @@ void Heuristic<T>::createPDB() {
         queue.pop();
         for (auto &child: current->getChildren()) {
             T childRank = getRank(child);
-            auto entry = PDB.find(childRank);
-            if (entry == PDB.end()) {
+            if (PDB.find(childRank) == PDB.end()) {
                 PDB[childRank] = PDB[currentRank] + 1;
                 queue.push(childRank);
             }
