@@ -31,7 +31,7 @@ int main() {
     solver->solve();
     end = std::chrono::steady_clock::now();
     std::cout << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "s" << std::endl;
-//    heuristic->saveToFile("pdb-long1.txt");
-//    smallHeuristic->saveToFile("pdb-short1.txt");
+//    heuristic->saveToFile("pdb-long.txt");
+//    smallHeuristic->saveToFile("pdb-short.txt");
     return 0;
 }
