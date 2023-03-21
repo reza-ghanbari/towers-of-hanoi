@@ -75,7 +75,7 @@ void Heuristic<T>::createPDB() {
         for (auto &child: current->getChildren()) {
             T childRank = getRank(child);
             auto entry = PDB.find(childRank);
-            if (entry == PDB.end() || (entry->second > PDB[currentRank] + 1)) {
+            if (entry == PDB.end()) {
                 PDB[childRank] = PDB[currentRank] + 1;
                 queue.push(childRank);
             }
@@ -83,10 +83,11 @@ void Heuristic<T>::createPDB() {
         }
         delete current;
     }
+    delete root;
 }
 
 template <typename T>
-void Heuristic<T>::saveToFile(std::string fileName) {
+void Heuristic<T>::saveToFile(const std::string& fileName) {
     std::ofstream file;
     file.open(fileName);
     for (auto &i : PDB) {

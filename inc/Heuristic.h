@@ -22,7 +22,7 @@ public:
     T convertStateToInt(const Short state[], const Short mapping[]);
     explicit Heuristic(int numberOfDisks, std::string fileName = "");
     T getRank(const State* state);
-    void saveToFile(std::string fileName);
+    void saveToFile(const std::string& fileName);
     Short getHeuristicValue(T rank);
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
