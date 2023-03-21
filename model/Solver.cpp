@@ -62,14 +62,35 @@ Long Solver::getCompressedState(const Short state[]) {
     return bits;
 }
 
+Short* Solver::selectFromArray(Short* array, int size, std::vector<Short> selection) {
+    auto* newArray = new Short[size];
+    for (int i = 0; i < size; ++i) {
+        newArray[i] = array[selection[i]];
+    }
+    return newArray;
+}
+
 Short Solver::getHCost(State* state) {
-    State* firstTwelve = this->generateState(state->getState(), ABSTRACT_SIZE);
-    State* lastTwelve = this->generateState(state->getState() + REMAINED_SIZE, ABSTRACT_SIZE);
-    State* firstFour = this->generateState(state->getState(), REMAINED_SIZE);
-    State* lastFour = this->generateState(state->getState() + ABSTRACT_SIZE, REMAINED_SIZE);
+    Short* stateArray = state->getState();
+    State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
+    State* lastTwelve = this->generateState(stateArray + REMAINED_SIZE, ABSTRACT_SIZE);
+    State* firstFour = this->generateState(stateArray, REMAINED_SIZE);
+    State* lastFour = this->generateState(stateArray + ABSTRACT_SIZE, REMAINED_SIZE);
     Short hCost = std::max(
             shortHeuristic->getHeuristicValue(firstFour) + longHeuristic->getHeuristicValue(lastTwelve)
             , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));
+    #pragma omp parallel for reduction(max:hCost)
+    for (auto & randomSelection : randomSelections) {
+        Short* biggerStateSArray = selectFromArray(stateArray, ABSTRACT_SIZE, randomSelection.first);
+        Short* smallerStateArray = selectFromArray(stateArray, REMAINED_SIZE, randomSelection.second);
+        State* biggerState = this->generateState(biggerStateSArray, ABSTRACT_SIZE);
+        State* smallerState = this->generateState(smallerStateArray, REMAINED_SIZE);
+        hCost = std::max(hCost, (Short)(longHeuristic->getHeuristicValue(biggerState) + shortHeuristic->getHeuristicValue(smallerState)));
+        delete biggerStateSArray;
+        delete smallerStateArray;
+        delete biggerState;
+        delete smallerState;
+    }
     delete firstTwelve;
     delete lastTwelve;
     delete firstFour;
@@ -93,4 +114,19 @@ State *Solver::generateState(Short *state, int numberOfDisks) {
             , numberOfDisksInPegs
             , topDiskInPegs
             , numberOfDisks);
+}
+
+std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelection() {
+    std::vector<Short> pool(TOWER_SIZE);
+    std::vector<Short> longArray;
+    std::vector<Short> shortArray;
+    for (int i = 0; i < TOWER_SIZE; i++)
+        pool[i] = i;
+    std::sample(pool.begin(), pool.end(), std::back_inserter(longArray), ABSTRACT_SIZE, std::mt19937(std::random_device()()));
+    for (int number : pool) {
+        if (std::find(longArray.begin(), longArray.end(), number) == longArray.end()) {
+            shortArray.push_back(number);
+        }
+    }
+    return std::make_pair(longArray, shortArray);
 }
