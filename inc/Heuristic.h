@@ -20,12 +20,13 @@ private:
     static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
 public:
     T convertStateToInt(const Short state[], const Short mapping[]);
-    explicit Heuristic(int numberOfDisks);
+    explicit Heuristic(int numberOfDisks, std::string fileName = "");
     T getRank(const State* state);
     void saveToFile(std::string fileName);
     Short getHeuristicValue(T rank);
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
+    void readFromFile(const std::string &filename);
 };
 
 

@@ -96,9 +96,34 @@ void Heuristic<T>::saveToFile(std::string fileName) {
 }
 
 template <typename T>
-Heuristic<T>::Heuristic(int numberOfDisks) {
+void Heuristic<T>::readFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file " << filename << std::endl;
+        return;
+    }
+    std::string line;
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        uint64_t key;
+        uint8_t value;
+        if (ss >> key >> value) {
+            PDB[key] = value;
+        } else {
+            std::cerr << "Failed to parse line: " << line << std::endl;
+        }
+    }
+    file.close();
+}
+
+template <typename T>
+Heuristic<T>::Heuristic(int numberOfDisks, std::string fileName) {
     this->numberOfDisks = numberOfDisks;
-    createPDB();
+    if (fileName.empty()) {
+        createPDB();
+    } else {
+        readFromFile(fileName);
+    }
 }
 
 template <typename T>
