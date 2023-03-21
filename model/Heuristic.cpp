@@ -137,7 +137,6 @@ Short Heuristic<T>::getHeuristicValue(T rank) {
 
 template <typename T>
 Short Heuristic<T>::getHeuristicValue(State *state) {
-    std::cout << "rank: " << getRank(state) << std::endl;
     return this->PDB[getRank(state)];
 }
 

@@ -18,12 +18,14 @@ public:
 class Solver {
 private:
     State *root;
+    int numberOfExpandedStates;
+    int numberOfGeneratedStates;
     Heuristic<Long> *longHeuristic;
     Heuristic<SmallInt> *shortHeuristic;
     State* generateState(Short* state, int numberOfDisks);
     Short getHCost(State *state);
-    int numberOfExpandedStates;
-    int numberOfGeneratedStates;
+    Long getCompressedState(const Short state[]);
+    Short *getDecompressedState(Long state);
 public:
     Solver(State *root, Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic)
         : longHeuristic(longHeuristic)
