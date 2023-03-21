@@ -23,14 +23,12 @@ bool State::isLegalMove(int diskNumber, int toPeg) {
     return topDiskInTargetPeg == totalNumberOfDisks || topDiskInTargetPeg >= diskNumber; // there is a condition diskNumber == topDiskInPegs[state[diskNumber]] but it is redundant because we check this in the for loop
 }
 
-void State::moveDisk(int diskNumber, int toPeg) {
+void State::moveDisk(Short diskNumber, Short toPeg) {
     Short fromPeg = state[diskNumber];
     numberOfDisksInPegs[fromPeg]--;
     numberOfDisksInPegs[toPeg]++;
     topDiskInPegs[toPeg] = diskNumber;
-    if (diskNumber == totalNumberOfDisks - 1) {
-        topDiskInPegs[fromPeg] = totalNumberOfDisks;
-    }
+    topDiskInPegs[fromPeg] = totalNumberOfDisks;
     for (int i = diskNumber + 1; i < totalNumberOfDisks; ++i) {
         if (state[i] == fromPeg) {
             topDiskInPegs[fromPeg] = i;
@@ -58,7 +56,7 @@ std::vector<State*> State::getChildren() {
     return children;
 }
 
-State* State::generateChildState(int diskNumber, int targetPeg) const {
+State* State::generateChildState(Short diskNumber, Short targetPeg) const {
     auto* newState = new Short[totalNumberOfDisks];
     auto* newNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS];
     auto* newTopDiskInPegs = new Short[NUMBER_OF_PEGS];

@@ -32,13 +32,14 @@ public:
     int isGoal();
     void setGCost(int cost) { this->gCost = cost; };
     void setHCost(int cost) { this->hCost = cost; };
+    int getGCost() const { return gCost; };
     int getCost() const { return gCost + hCost; };
-    void moveDisk(int diskNumber, int toPeg);
+    void moveDisk(Short diskNumber, Short toPeg);
     Short* getNumberOfDisksInPegs() const;
     Short* getTopDiskInPegs() const;
     std::vector<State *> getChildren();
     [[nodiscard]] int getNumberOfPegsWithDisks() const;
-    [[nodiscard]] State * generateChildState(int diskNumber, int targetPeg) const;
+    State *generateChildState(Short diskNumber, Short targetPeg) const;
     void printState() const;
 };
 
