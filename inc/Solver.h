@@ -11,10 +11,15 @@
 #include <omp.h>
 #include "Heuristic.h"
 
+typedef std::pair<Long, std::pair<Short, Short>> Item; // first = state, second.first = gCost, second.second = hCost
+
 class CompareStates {
 public:
-    bool operator()(const State *lhs, const State *rhs) const {
-        return (lhs->getCost() > rhs->getCost()) || (lhs->getCost() == rhs->getCost() && lhs->getGCost() > rhs->getGCost());
+    bool operator()(const Item lhs, const Item rhs) const {
+        Short lhsCost = lhs.second.first + lhs.second.second;
+        Short rhsCost = rhs.second.first + rhs.second.second;
+        return (lhsCost > rhsCost)
+            || (lhsCost == rhsCost && lhs.second.first > rhs.second.first);
     }
 };
 
@@ -45,6 +50,8 @@ public:
         }
     };
     void solve();
+
+    State *getStateFromItem(const Item &currentItem);
 };
 
 

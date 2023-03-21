@@ -5,13 +5,13 @@
 #include "../inc/Solver.h"
 
 void Solver::solve() {
-    std::priority_queue<State*, std::vector<State*>, CompareStates> openList;
+    std::priority_queue<Item, std::vector<Item>, CompareStates> openList;
     std::unordered_map<Long, Long> closedList;
-    root->setHCost(getHCost(root));
-    openList.push(root);
+    openList.emplace(getCompressedState(root->getState()), std::make_pair(0, getHCost(root)));
     int globalCost = 0;
+    delete root;
     while (!openList.empty()) {
-        State *current = openList.top();
+        State *current = getStateFromItem(openList.top());
         openList.pop();
         numberOfExpandedStates++;
         if (current->getCost() != globalCost) {
@@ -32,14 +32,21 @@ void Solver::solve() {
             Long childRank = getCompressedState(child->getState());
             if (closedList.find(childRank) == closedList.end()) {
                 closedList[childRank] = currentRank;
-                child->setHCost(getHCost(child));
-                openList.push(child);
-            } else {
-                delete child;
+                openList.emplace(getCompressedState(child->getState()), std::make_pair(child->getGCost(), getHCost(child)));
             }
+            delete child;
         }
         delete current;
     }
+}
+
+State *Solver::getStateFromItem(const Item &currentItem) {
+    Short* stateArray = getDecompressedState(currentItem.first);
+    State *current = generateState(stateArray, TOWER_SIZE);
+    current->setGCost(currentItem.second.first);
+    current->setHCost(currentItem.second.second);
+    delete stateArray;
+    return current;
 }
 
 Short* Solver::getDecompressedState(Long state) {
