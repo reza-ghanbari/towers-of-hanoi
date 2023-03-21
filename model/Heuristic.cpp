@@ -105,13 +105,16 @@ void Heuristic<T>::readFromFile(const std::string& filename) {
     }
     std::string line;
     while (std::getline(file, line)) {
-        std::stringstream ss(line);
         uint64_t key;
         uint8_t value;
-        if (ss >> key >> value) {
+        size_t spacePos = line.find(' ');
+        if (spacePos != std::string::npos) {
+            key = std::stoull(line.substr(0, spacePos));
+            value = std::stoi(line.substr(spacePos + 1));
             PDB[key] = value;
         } else {
             std::cerr << "Failed to parse line: " << line << std::endl;
+            break;
         }
     }
     file.close();
@@ -134,6 +137,7 @@ Short Heuristic<T>::getHeuristicValue(T rank) {
 
 template <typename T>
 Short Heuristic<T>::getHeuristicValue(State *state) {
+    std::cout << "rank: " << getRank(state) << std::endl;
     return this->PDB[getRank(state)];
 }
 
