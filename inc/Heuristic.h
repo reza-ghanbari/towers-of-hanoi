@@ -27,7 +27,6 @@ public:
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
     void readFromFile(const std::string &filename);
-    inline void swapValues(Short *mapping, Short *numberOfDisksInPegs, Short *topDiskInPegs, Short firstIndex, Short secondIndex);
 };
 
 
