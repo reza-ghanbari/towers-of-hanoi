@@ -8,8 +8,6 @@ void Solver::solve() {
     std::priority_queue<State*, std::vector<State*>, CompareStates> openList;
     std::unordered_map<Long, Long> closedList;
     root->setHCost(getHCost(root));
-    std::cout << "Initial State Cost: " << unsigned(getHCost(root)) << std::endl;
-    std::cout << root->getCost() << std::endl;
     openList.push(root);
     int globalCost = 0;
     while (!openList.empty()) {
@@ -18,10 +16,12 @@ void Solver::solve() {
         numberOfExpandedStates++;
         if (current->getCost() != globalCost) {
             globalCost = current->getCost();
-            std::cout << "Cost: " << globalCost << ", ";
-            std::cout << "Number of Expanded States: " << numberOfExpandedStates << ", ";
-            std::cout << "Number of Generated States: " << numberOfGeneratedStates << std::endl;
-            if (globalCost >= 125)
+            std::cout << "Cost: " << globalCost
+                << ", Number of Expanded States: " << numberOfExpandedStates
+                << ", Number of Generated States: " << numberOfGeneratedStates
+                << ", closed list size: " << closedList.size()
+                << ", open list size: " << openList.size() << std::endl;
+            if (globalCost >= 70)
                 current->printState();
         }
         if (current->isGoal()) {
@@ -40,6 +40,7 @@ void Solver::solve() {
                 delete child;
             }
         }
+        delete current;
     }
 }
 
