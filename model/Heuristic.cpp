@@ -140,6 +140,13 @@ Short Heuristic<T>::getHeuristicValue(State *state) {
     return this->PDB[getRank(state)];
 }
 
+template<typename T>
+inline void Heuristic<T>::swapValues(Short *mapping, Short *numberOfDisksInPegs, Short *topDiskInPegs, Short firstIndex, Short secondIndex) {
+    std::swap(mapping[firstIndex], mapping[secondIndex]);
+    std::swap(numberOfDisksInPegs[firstIndex], numberOfDisksInPegs[secondIndex]);
+    std::swap(topDiskInPegs[firstIndex], topDiskInPegs[secondIndex]);
+}
+
 template <typename T>
 void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
     auto *temp = new Short[NUMBER_OF_PEGS - 1];
@@ -149,29 +156,19 @@ void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDi
         tempTopDiskInPegs[i] = topDiskInPegs[i];
     }
     if (temp[0] < temp[1] || (temp[0] == temp[1] && tempTopDiskInPegs[0] < tempTopDiskInPegs[1])) {
-        std::swap(tempTopDiskInPegs[0], tempTopDiskInPegs[1]);
-        std::swap(temp[0], temp[1]);
-        std::swap(mapping[0], mapping[1]);
+        swapValues(mapping, temp, tempTopDiskInPegs, 0, 0);
     }
     if (temp[2] < temp[3] || (temp[2] == temp[3] && tempTopDiskInPegs[2] < tempTopDiskInPegs[3])) {
-        std::swap(tempTopDiskInPegs[2], tempTopDiskInPegs[3]);
-        std::swap(temp[2], temp[3]);
-        std::swap(mapping[2], mapping[3]);
+        swapValues(mapping, temp, tempTopDiskInPegs, 2, 3);
     }
     if (temp[0] < temp[2] || (temp[0] == temp[2] && tempTopDiskInPegs[0] < tempTopDiskInPegs[2])) {
-        std::swap(tempTopDiskInPegs[0], tempTopDiskInPegs[2]);
-        std::swap(temp[0], temp[2]);
-        std::swap(mapping[0], mapping[2]);
+        swapValues(mapping, temp, tempTopDiskInPegs, 0, 2);
     }
     if (temp[1] < temp[3] || (temp[1] == temp[3] && tempTopDiskInPegs[1] < tempTopDiskInPegs[3])) {
-        std::swap(tempTopDiskInPegs[1], tempTopDiskInPegs[3]);
-        std::swap(temp[1], temp[3]);
-        std::swap(mapping[1], mapping[3]);
+        swapValues(mapping, temp, tempTopDiskInPegs, 1, 3);
     }
     if (temp[1] < temp[2] || (temp[1] == temp[2] && tempTopDiskInPegs[1] < tempTopDiskInPegs[2])) {
-        std::swap(tempTopDiskInPegs[1], tempTopDiskInPegs[2]);
-        std::swap(temp[1], temp[2]);
-        std::swap(mapping[1], mapping[2]);
+        swapValues(mapping, temp, tempTopDiskInPegs, 1, 2);
     }
     auto* indices = new Short[NUMBER_OF_PEGS]{0};
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {

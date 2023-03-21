@@ -17,7 +17,7 @@ private:
     std::unordered_map<T, Short> PDB;
     int numberOfDisks;
     void createPDB();
-    static void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
+    void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
 public:
     T convertStateToInt(const Short state[], const Short mapping[]);
     explicit Heuristic(int numberOfDisks, std::string fileName = "");
@@ -27,6 +27,7 @@ public:
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
     void readFromFile(const std::string &filename);
+    inline void swapValues(Short *mapping, Short *numberOfDisksInPegs, Short *topDiskInPegs, Short firstIndex, Short secondIndex);
 };
 
 
