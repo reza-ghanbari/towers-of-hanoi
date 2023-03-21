@@ -22,9 +22,15 @@ private:
     Heuristic<SmallInt> *shortHeuristic;
     State* generateState(Short* state, int numberOfDisks);
     Short getHCost(State *state);
+    int numberOfExpandedStates;
+    int numberOfGeneratedStates;
 public:
     Solver(State *root, Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic)
-        : longHeuristic(longHeuristic), shortHeuristic(shortHeuristic), root(root) {};
+        : longHeuristic(longHeuristic)
+        , shortHeuristic(shortHeuristic)
+        , root(root)
+        , numberOfExpandedStates(0)
+        , numberOfGeneratedStates(1) {};
     void solve();
 };
 

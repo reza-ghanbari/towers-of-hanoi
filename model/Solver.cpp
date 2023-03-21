@@ -9,22 +9,40 @@ void Solver::solve() {
     std::unordered_map<Long, Long> closedList;
     const Short mapping[] = {0, 1, 2, 3, 4};
     openList.push(root);
+    int globalCost = 0;
     while (!openList.empty()) {
         State *current = openList.top();
         openList.pop();
-        Long currentRank = longHeuristic->getRank(current);
+        numberOfExpandedStates++;
+        if (current->getCost() != globalCost) {
+            globalCost = current->getCost();
+            std::cout << "Cost: " << globalCost << ", ";
+            std::cout << "Number of Expanded States: " << numberOfExpandedStates << ", ";
+            std::cout << "Number of Generated States: " << numberOfGeneratedStates << std::endl;
+        }
         if (current->isGoal()) {
             current->printState();
             return;
         }
-        std::vector<State*> children = current->getChildren();
-        for (State *child : children) {
+//        if (openList.size() == 1) {
+//            std::cout << "Current State: ";
+//            current->printState();
+//        }
+        for (State *child : current->getChildren()) {
+//            if (openList.size() == 1) {
+//                std::cout << "Child State: ";
+//                child->printState();
+//            }
+            numberOfGeneratedStates++;
             Long childRank = longHeuristic->convertStateToInt(child->getState(), mapping);
             if (closedList.find(childRank) == closedList.end()) {
-                closedList[childRank] = currentRank;
+                closedList[childRank] = longHeuristic->getRank(current);
                 child->setHCost(this->getHCost(child));
                 openList.push(child);
             }
+//            else if (openList.size() == 1) {
+//                std::cout << "Child is in Closed List" << std::endl;
+//            }
         }
     }
 }
