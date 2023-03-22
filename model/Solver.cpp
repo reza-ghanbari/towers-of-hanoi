@@ -85,28 +85,32 @@ Short Solver::getHCost(State* state) {
 
 inline Short
 Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection) {
+    Short currentElement;
+    Short smallerStateArray[REMAINED_SIZE];
     Short biggerStateArray[ABSTRACT_SIZE];
+    std::vector<Short> shorterSelection = randomSelection.second;
     std::vector<Short> longerSelection = randomSelection.first;
     Short numberOfDisksInPegs[NUMBER_OF_PEGS]{0};
     Short topDiskInPegs[NUMBER_OF_PEGS]{0};
     std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, ABSTRACT_SIZE);
     for (int i = 0; i < ABSTRACT_SIZE; ++i) {
-        biggerStateArray[i] = stateArray[longerSelection[i]];
-        numberOfDisksInPegs[biggerStateArray[i]]++;
-        if (topDiskInPegs[biggerStateArray[i]] == ABSTRACT_SIZE)
-            topDiskInPegs[biggerStateArray[i]] = i;
+        currentElement = stateArray[longerSelection[i]];
+        biggerStateArray[i] = currentElement;
+        numberOfDisksInPegs[currentElement]++;
+        if (topDiskInPegs[currentElement] == ABSTRACT_SIZE)
+            topDiskInPegs[currentElement] = i;
     }
     Short biggerStateHCost = longHeuristic->getHeuristicValue(biggerStateArray, numberOfDisksInPegs, topDiskInPegs);
-
-    Short smallerStateArray[REMAINED_SIZE];
-    std::vector<Short> shorterSelection = randomSelection.second;
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, REMAINED_SIZE);
+    std::fill(numberOfDisksInPegs, numberOfDisksInPegs + NUMBER_OF_PEGS, 0);
     for (int i = 0; i < REMAINED_SIZE; ++i) {
-        smallerStateArray[i] = stateArray[shorterSelection[i]];
+        currentElement = stateArray[shorterSelection[i]];
+        smallerStateArray[i] = currentElement;
+        numberOfDisksInPegs[currentElement]++;
+        if (topDiskInPegs[currentElement] == REMAINED_SIZE)
+            topDiskInPegs[currentElement] = i;
     }
-    State* smallerState = generateState(smallerStateArray, REMAINED_SIZE);
-    Short hCost = biggerStateHCost + shortHeuristic->getHeuristicValue(smallerState);
-    delete smallerState;
-    return hCost;
+    return biggerStateHCost + shortHeuristic->getHeuristicValue(smallerStateArray, numberOfDisksInPegs, topDiskInPegs);
 }
 
 State *Solver::generateState(Short *state, int numberOfDisks) {
