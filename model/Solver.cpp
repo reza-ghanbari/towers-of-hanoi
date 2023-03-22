@@ -63,14 +63,6 @@ Long Solver::getCompressedState(const Short state[]) {
     return bits;
 }
 
-Short* Solver::selectFromArray(const Short* array, int size, std::vector<Short> selection) {
-    auto* newArray = new Short[size];
-    for (int i = 0; i < size; ++i) {
-        newArray[i] = array[selection[i]];
-    }
-    return newArray;
-}
-
 Short Solver::getHCost(State* state) {
     Short* stateArray = state->getState();
     State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
@@ -116,8 +108,7 @@ State *Solver::generateState(Short *state, int numberOfDisks) {
     std::copy(state, state + numberOfDisks, tempState);
     auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
     auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    for (int i = 0; i < NUMBER_OF_PEGS; ++i)
-        topDiskInPegs[i] = numberOfDisks;
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
     for (int i = 0; i <= numberOfDisks - 1; ++i) {
         numberOfDisksInPegs[tempState[i]]++;
         if (topDiskInPegs[tempState[i]] == numberOfDisks)

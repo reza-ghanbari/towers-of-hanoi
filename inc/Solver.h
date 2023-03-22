@@ -34,7 +34,7 @@ private:
     State* generateState(Short* state, int numberOfDisks);
     Short getHCost(State *state);
     Long getCompressedState(const Short state[]);
-    Short *selectFromArray(const Short *array, int size, std::vector<Short> selection);
+
     std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
     inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
     State *getStateFromItem(const Item &currentItem);

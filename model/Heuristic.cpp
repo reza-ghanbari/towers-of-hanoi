@@ -25,9 +25,7 @@ State* Heuristic<T>::getUnrankedState(T rank) {
     auto* state = new Short[numberOfDisks];
     auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
     auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
-        topDiskInPegs[i] = numberOfDisks;
-    }
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
     for (int i = numberOfDisks - 1; i >= 0; --i) {
         state[i] = bits.to_ulong() & 7;
         bits >>= 3;
@@ -54,12 +52,10 @@ template <typename T>
 void Heuristic<T>::createPDB() {
     std::queue<T> queue;
     auto* goalState = new Short[numberOfDisks]{0};
-    for (int i = 0; i <= numberOfDisks - 1; ++i)
-        goalState[i] = NUMBER_OF_PEGS - 1;
+    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS];
     auto* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i)
-        topDiskInPegs[i] = numberOfDisks;
+    std::fill(goalState, goalState + numberOfDisks, NUMBER_OF_PEGS - 1);
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
     goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = numberOfDisks;
     auto *root = new State(goalState
             , goalNumberOfDisksInPegs
@@ -176,7 +172,5 @@ void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDi
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
         indices[mapping[i]] = i;
     }
-    for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
-        mapping[i] = indices[i];
-    }
+    std::copy(indices, indices + NUMBER_OF_PEGS - 1, mapping);
 }
