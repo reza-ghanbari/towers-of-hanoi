@@ -137,40 +137,34 @@ Short Heuristic<T>::getHeuristicValue(State *state) {
 
 template <typename T>
 void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
-    Short temp[NUMBER_OF_PEGS - 1];
-    Short tempTopDiskInPegs[NUMBER_OF_PEGS - 1];
-    for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
-        temp[i] = numberOfDisksInPegs[i];
-        tempTopDiskInPegs[i] = topDiskInPegs[i];
+    Short zero = 0, one = 1, two = 2, three = 3;
+    Short first = numberOfDisksInPegs[zero];
+    Short second = numberOfDisksInPegs[one];
+    if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[one])) {
+        std::swap(zero, one);
     }
-    if (temp[0] < temp[1] || (temp[0] == temp[1] && tempTopDiskInPegs[0] < tempTopDiskInPegs[1])) {
-        std::swap(tempTopDiskInPegs[0], tempTopDiskInPegs[1]);
-        std::swap(temp[0], temp[1]);
-        std::swap(mapping[0], mapping[1]);
+    first = numberOfDisksInPegs[two];
+    second = numberOfDisksInPegs[three];
+    if (first < second || (first == second && topDiskInPegs[two] < topDiskInPegs[three])) {
+        std::swap(two, three);
     }
-    if (temp[2] < temp[3] || (temp[2] == temp[3] && tempTopDiskInPegs[2] < tempTopDiskInPegs[3])) {
-        std::swap(tempTopDiskInPegs[2], tempTopDiskInPegs[3]);
-        std::swap(temp[2], temp[3]);
-        std::swap(mapping[2], mapping[3]);
+    first = numberOfDisksInPegs[zero];
+    second = numberOfDisksInPegs[two];
+    if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[two])) {
+        std::swap(zero, two);
     }
-    if (temp[0] < temp[2] || (temp[0] == temp[2] && tempTopDiskInPegs[0] < tempTopDiskInPegs[2])) {
-        std::swap(tempTopDiskInPegs[0], tempTopDiskInPegs[2]);
-        std::swap(temp[0], temp[2]);
-        std::swap(mapping[0], mapping[2]);
+    first = numberOfDisksInPegs[one];
+    second = numberOfDisksInPegs[three];
+    if (first < second || (first == second && topDiskInPegs[one] < topDiskInPegs[three])) {
+        std::swap(one, three);
     }
-    if (temp[1] < temp[3] || (temp[1] == temp[3] && tempTopDiskInPegs[1] < tempTopDiskInPegs[3])) {
-        std::swap(tempTopDiskInPegs[1], tempTopDiskInPegs[3]);
-        std::swap(temp[1], temp[3]);
-        std::swap(mapping[1], mapping[3]);
+    first = numberOfDisksInPegs[one];
+    second = numberOfDisksInPegs[two];
+    if (first < second || (first == second && topDiskInPegs[one] < topDiskInPegs[two])) {
+        std::swap(one, two);
     }
-    if (temp[1] < temp[2] || (temp[1] == temp[2] && tempTopDiskInPegs[1] < tempTopDiskInPegs[2])) {
-        std::swap(tempTopDiskInPegs[1], tempTopDiskInPegs[2]);
-        std::swap(temp[1], temp[2]);
-        std::swap(mapping[1], mapping[2]);
-    }
-    Short indices[NUMBER_OF_PEGS]{0};
-    for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
-        indices[mapping[i]] = i;
-    }
-    std::copy(indices, indices + NUMBER_OF_PEGS - 1, mapping);
+    mapping[zero] = 0;
+    mapping[one] = 1;
+    mapping[two] = 2;
+    mapping[three] = 3;
 }

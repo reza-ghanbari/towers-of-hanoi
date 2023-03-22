@@ -21,7 +21,7 @@ void Solver::solve() {
                 << ", Number of Generated States: " << numberOfGeneratedStates
                 << ", closed list size: " << closedList.size()
                 << ", open list size: " << openList.size() << std::endl;
-            if (globalCost > 70) break;
+            if (globalCost >= 70) break;
         }
         if (current->isGoal()) {
             current->printState();
