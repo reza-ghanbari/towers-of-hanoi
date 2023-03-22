@@ -8,15 +8,19 @@ template class Heuristic<Long>;
 template class Heuristic<SmallInt>;
 
 template <typename T>
-T Heuristic<T>::getRank(const State* state) {
-    Short * numberOfDisksInPegs = state->getNumberOfDisksInPegs();
-    Short* topDiskInPegs = state->getTopDiskInPegs();
-    Short mapping[NUMBER_OF_PEGS];
-    for (int i = 0; i < NUMBER_OF_PEGS; ++i)
-        mapping[i] = i;
+T Heuristic<T>::getRankFromArrays(const Short* state, const Short* numberOfDisksInPegs, const Short* topDiskInPegs) {
+    Short mapping[NUMBER_OF_PEGS]{0};
+    mapping[NUMBER_OF_PEGS - 1] = NUMBER_OF_PEGS - 1;
     getMappingForSymmetry(mapping, numberOfDisksInPegs, topDiskInPegs);
-    Long rank = convertStateToInt(state->getState(), mapping);
-    return rank;
+    return convertStateToInt(state, mapping);
+}
+
+template <typename T>
+T Heuristic<T>::getRank(const State* state) {
+    Short mapping[NUMBER_OF_PEGS]{0};
+    mapping[NUMBER_OF_PEGS - 1] = NUMBER_OF_PEGS - 1;
+    getMappingForSymmetry(mapping, state->getNumberOfDisksInPegs(), state->getTopDiskInPegs());
+    return convertStateToInt(state->getState(), mapping);
 }
 
 template <typename T>
@@ -125,8 +129,8 @@ Heuristic<T>::Heuristic(int numberOfDisks, std::string fileName) {
 }
 
 template <typename T>
-Short Heuristic<T>::getHeuristicValue(T rank) {
-    return this->PDB[rank];
+Short Heuristic<T>::getHeuristicValue(const Short* state, const Short* numberOfDisksInPegs, const Short* topDiskInPegs) {
+    return this->PDB[getRankFromArrays(state, numberOfDisksInPegs, topDiskInPegs)];
 }
 
 template <typename T>

@@ -21,9 +21,10 @@ private:
 public:
     T convertStateToInt(const Short state[], const Short mapping[]);
     explicit Heuristic(int numberOfDisks, std::string fileName = "");
+    T getRankFromArrays(const Short *state, const Short *numberOfDisksInPegs, const Short *topDiskInPegs);
     T getRank(const State* state);
     void saveToFile(const std::string& fileName);
-    Short getHeuristicValue(T rank);
+    Short getHeuristicValue(const Short* state, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
     void readFromFile(const std::string &filename);

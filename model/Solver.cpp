@@ -85,20 +85,26 @@ Short Solver::getHCost(State* state) {
 
 inline Short
 Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection) {
-    Short biggerStateSArray[ABSTRACT_SIZE];
-    Short smallerStateArray[REMAINED_SIZE];
+    Short biggerStateArray[ABSTRACT_SIZE];
     std::vector<Short> longerSelection = randomSelection.first;
-    std::vector<Short> shorterSelection = randomSelection.second;
+    Short numberOfDisksInPegs[NUMBER_OF_PEGS]{0};
+    Short topDiskInPegs[NUMBER_OF_PEGS]{0};
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, ABSTRACT_SIZE);
     for (int i = 0; i < ABSTRACT_SIZE; ++i) {
-        biggerStateSArray[i] = stateArray[longerSelection[i]];
+        biggerStateArray[i] = stateArray[longerSelection[i]];
+        numberOfDisksInPegs[biggerStateArray[i]]++;
+        if (topDiskInPegs[biggerStateArray[i]] == ABSTRACT_SIZE)
+            topDiskInPegs[biggerStateArray[i]] = i;
     }
+    Short biggerStateHCost = longHeuristic->getHeuristicValue(biggerStateArray, numberOfDisksInPegs, topDiskInPegs);
+
+    Short smallerStateArray[REMAINED_SIZE];
+    std::vector<Short> shorterSelection = randomSelection.second;
     for (int i = 0; i < REMAINED_SIZE; ++i) {
         smallerStateArray[i] = stateArray[shorterSelection[i]];
     }
-    State* biggerState = generateState(biggerStateSArray, ABSTRACT_SIZE);
     State* smallerState = generateState(smallerStateArray, REMAINED_SIZE);
-    Short hCost = longHeuristic->getHeuristicValue(biggerState) + shortHeuristic->getHeuristicValue(smallerState);
-    delete biggerState;
+    Short hCost = biggerStateHCost + shortHeuristic->getHeuristicValue(smallerState);
     delete smallerState;
     return hCost;
 }
