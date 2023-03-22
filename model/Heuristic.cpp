@@ -21,14 +21,13 @@ T Heuristic<T>::getRank(const State* state) {
 
 template <typename T>
 State* Heuristic<T>::getUnrankedState(T rank) {
-    std::bitset<64> bits(rank);
     auto* state = new Short[numberOfDisks];
     auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
     auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
     std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
     for (int i = numberOfDisks - 1; i >= 0; --i) {
-        state[i] = bits.to_ulong() & 7;
-        bits >>= 3;
+        state[i] = rank & 7;
+        rank >>= 3;
     }
     for (int i = 0; i <= numberOfDisks - 1; ++i) {
         numberOfDisksInPegs[state[i]]++;
