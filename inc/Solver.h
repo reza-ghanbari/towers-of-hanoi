@@ -35,8 +35,10 @@ private:
     Short getHCost(State *state);
     Long getCompressedState(const Short state[]);
     Short *getDecompressedState(Long state);
-    Short *selectFromArray(Short *array, int size, std::vector<Short> selection);
+    Short *selectFromArray(const Short *array, int size, std::vector<Short> selection);
     std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
+    inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
+    State *getStateFromItem(const Item &currentItem);
 public:
     Solver(State *root, Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic)
         : longHeuristic(longHeuristic)
@@ -50,8 +52,6 @@ public:
         }
     };
     void solve();
-
-    State *getStateFromItem(const Item &currentItem);
 };
 
 

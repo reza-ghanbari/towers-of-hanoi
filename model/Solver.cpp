@@ -21,6 +21,7 @@ void Solver::solve() {
                 << ", Number of Generated States: " << numberOfGeneratedStates
                 << ", closed list size: " << closedList.size()
                 << ", open list size: " << openList.size() << std::endl;
+            if (globalCost > 70) break;
         }
         if (current->isGoal()) {
             current->printState();
@@ -67,7 +68,7 @@ Long Solver::getCompressedState(const Short state[]) {
     return bits;
 }
 
-Short* Solver::selectFromArray(Short* array, int size, std::vector<Short> selection) {
+Short* Solver::selectFromArray(const Short* array, int size, std::vector<Short> selection) {
     auto* newArray = new Short[size];
     for (int i = 0; i < size; ++i) {
         newArray[i] = array[selection[i]];
@@ -86,20 +87,26 @@ Short Solver::getHCost(State* state) {
             , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));
     #pragma omp parallel for reduction(max:hCost)
     for (auto & randomSelection : randomSelections) {
-        Short* biggerStateSArray = selectFromArray(stateArray, ABSTRACT_SIZE, randomSelection.first);
-        Short* smallerStateArray = selectFromArray(stateArray, REMAINED_SIZE, randomSelection.second);
-        State* biggerState = this->generateState(biggerStateSArray, ABSTRACT_SIZE);
-        State* smallerState = this->generateState(smallerStateArray, REMAINED_SIZE);
-        hCost = std::max(hCost, (Short)(longHeuristic->getHeuristicValue(biggerState) + shortHeuristic->getHeuristicValue(smallerState)));
-        delete biggerStateSArray;
-        delete smallerStateArray;
-        delete biggerState;
-        delete smallerState;
+        hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));
     }
     delete firstTwelve;
     delete lastTwelve;
     delete firstFour;
     delete lastFour;
+    return hCost;
+}
+
+inline Short
+Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection) {
+    Short* biggerStateSArray = selectFromArray(stateArray, ABSTRACT_SIZE, randomSelection.first);
+    Short* smallerStateArray = selectFromArray(stateArray, REMAINED_SIZE, randomSelection.second);
+    State* biggerState = generateState(biggerStateSArray, ABSTRACT_SIZE);
+    State* smallerState = generateState(smallerStateArray, REMAINED_SIZE);
+    Short hCost = longHeuristic->getHeuristicValue(biggerState) + shortHeuristic->getHeuristicValue(smallerState);
+    delete biggerStateSArray;
+    delete smallerStateArray;
+    delete biggerState;
+    delete smallerState;
     return hCost;
 }
 
