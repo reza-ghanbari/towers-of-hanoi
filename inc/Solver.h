@@ -34,7 +34,6 @@ private:
     State* generateState(Short* state, int numberOfDisks);
     Short getHCost(State *state);
     Long getCompressedState(const Short state[]);
-    Short *getDecompressedState(Long state);
     Short *selectFromArray(const Short *array, int size, std::vector<Short> selection);
     std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
     inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
@@ -47,7 +46,7 @@ public:
         , numberOfExpandedStates(0)
         , numberOfGeneratedStates(1) {
         omp_set_num_threads(NUMBER_OF_THREADS);
-        for (int i = 0; i < NUMBER_OF_SPLITS - 2; ++i) {
+        for (int i = 0; i < NUMBER_OF_SPLITS; ++i) {
             randomSelections.push_back(generateRandomSelection());
         }
     };

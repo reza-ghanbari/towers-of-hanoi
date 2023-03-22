@@ -42,21 +42,16 @@ void Solver::solve() {
 }
 
 State *Solver::getStateFromItem(const Item &currentItem) {
-    Short* stateArray = getDecompressedState(currentItem.first);
+    Long state = currentItem.first;
+    Short stateArray[TOWER_SIZE];
+    for (int i = TOWER_SIZE - 1; i >= 0; i--) {
+        stateArray[i] = state & 7;
+        state >>= 3;
+    }
     State *current = generateState(stateArray, TOWER_SIZE);
     current->setGCost(currentItem.second.first);
     current->setHCost(currentItem.second.second);
-    delete stateArray;
     return current;
-}
-
-Short* Solver::getDecompressedState(Long state) {
-    auto* bits = new Short[TOWER_SIZE];
-    for (int i = TOWER_SIZE - 1; i >= 0; i--) {
-        bits[i] = state & 7;
-        state >>= 3;
-    }
-    return bits;
 }
 
 Long Solver::getCompressedState(const Short state[]) {
@@ -98,13 +93,19 @@ Short Solver::getHCost(State* state) {
 
 inline Short
 Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection) {
-    Short* biggerStateSArray = selectFromArray(stateArray, ABSTRACT_SIZE, randomSelection.first);
-    Short* smallerStateArray = selectFromArray(stateArray, REMAINED_SIZE, randomSelection.second);
+    Short biggerStateSArray[ABSTRACT_SIZE];
+    Short smallerStateArray[REMAINED_SIZE];
+    std::vector<Short> longerSelection = randomSelection.first;
+    std::vector<Short> shorterSelection = randomSelection.second;
+    for (int i = 0; i < ABSTRACT_SIZE; ++i) {
+        biggerStateSArray[i] = stateArray[longerSelection[i]];
+    }
+    for (int i = 0; i < REMAINED_SIZE; ++i) {
+        smallerStateArray[i] = stateArray[shorterSelection[i]];
+    }
     State* biggerState = generateState(biggerStateSArray, ABSTRACT_SIZE);
     State* smallerState = generateState(smallerStateArray, REMAINED_SIZE);
     Short hCost = longHeuristic->getHeuristicValue(biggerState) + shortHeuristic->getHeuristicValue(smallerState);
-    delete biggerStateSArray;
-    delete smallerStateArray;
     delete biggerState;
     delete smallerState;
     return hCost;

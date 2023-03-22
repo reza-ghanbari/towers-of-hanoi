@@ -141,8 +141,8 @@ Short Heuristic<T>::getHeuristicValue(State *state) {
 
 template <typename T>
 void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDisksInPegs, const Short* topDiskInPegs) {
-    auto *temp = new Short[NUMBER_OF_PEGS - 1];
-    auto *tempTopDiskInPegs = new Short[NUMBER_OF_PEGS - 1];
+    Short temp[NUMBER_OF_PEGS - 1];
+    Short tempTopDiskInPegs[NUMBER_OF_PEGS - 1];
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
         temp[i] = numberOfDisksInPegs[i];
         tempTopDiskInPegs[i] = topDiskInPegs[i];
@@ -172,14 +172,11 @@ void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDi
         std::swap(temp[1], temp[2]);
         std::swap(mapping[1], mapping[2]);
     }
-    auto* indices = new Short[NUMBER_OF_PEGS]{0};
+    Short indices[NUMBER_OF_PEGS]{0};
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
         indices[mapping[i]] = i;
     }
     for (int i = 0; i < NUMBER_OF_PEGS - 1; ++i) {
         mapping[i] = indices[i];
     }
-    delete[] indices;
-    delete[] temp;
-    delete[] tempTopDiskInPegs;
 }
