@@ -3,12 +3,14 @@
 //
 
 #include "../inc/Solver.h"
+#include <iomanip>
 
 void Solver::solve() {
     std::priority_queue<Item, std::vector<Item>, CompareStates> openList;
     std::unordered_map<Long, Long> closedList;
     openList.emplace(root->getCompressedState(), std::make_pair(0, getHCost(root)));
     int globalCost = 0;
+    Short spaceSize = 12;
     delete root;
     while (!openList.empty()) {
         Long currentRank = openList.top().first;
@@ -17,11 +19,11 @@ void Solver::solve() {
         numberOfExpandedStates++;
         if (current->getCost() != globalCost) {
             globalCost = current->getCost();
-            std::cout << "Cost: " << globalCost
-                << ", Number of Expanded States: " << numberOfExpandedStates
-                << ", Number of Generated States: " << numberOfGeneratedStates
-                << ", open list size: " << openList.size() << std::endl;
-            if (globalCost >= 70) break;
+            std::cout << std::left << "cost: " << globalCost
+                << "   expanded: " << std::setw(spaceSize) << numberOfExpandedStates
+                << " generated: " << std::setw(spaceSize) << numberOfGeneratedStates
+                << std::endl;
+//            if (globalCost >= 70) break;
         }
         if (current->isGoal()) {
             printPath(currentRank, closedList);
@@ -137,10 +139,12 @@ void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList
     std::vector<Long> path;
     auto rank = goalRank;
     while ((rank = closedList[rank]) != 0) {
-        path.push_back(goalRank);
+        path.push_back(rank);
     }
     path.push_back(0);
     std::reverse(path.begin(), path.end());
+    std::cout << "Solution found in length: " << path.size() << std::endl;
+    std::cout << "Path: " << std::endl;
     for (Long state : path) {
         State *currentState = getStateFromItem(std::make_pair(state, std::make_pair(0, 0)));
         currentState->printState();
