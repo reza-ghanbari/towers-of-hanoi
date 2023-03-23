@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include <random>
-#include <omp.h>
 #include "Heuristic.h"
 #include "Selections.h"
 
@@ -42,7 +41,6 @@ public:
         , root(root)
         , numberOfExpandedStates(0)
         , numberOfGeneratedStates(1) {
-        omp_set_num_threads(NUMBER_OF_THREADS);
     };
     void solve();
     void printPath(Long goalRank, std::unordered_map<Long, Long> &closedList);

@@ -10,6 +10,6 @@
 typedef uint8_t Short;
 typedef uint16_t SmallInt;
 typedef uint64_t Long;
-typedef std::pair<std::vector<Short>, std::vector<Short>> SelectionPair;
+typedef std::pair<std::vector<Short>, std::vector<Short>> SelectionPair;//<short, long> is the order of splits
 
 #endif //TOWERS_OF_HANOI_SOLVER_TYPES_H

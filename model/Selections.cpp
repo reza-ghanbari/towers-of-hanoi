@@ -7,32 +7,39 @@
 #include "../inc/Selections.h"
 
 Selections::Selections(Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic) {
+    omp_set_num_threads(NUMBER_OF_THREADS);
     this->longHeuristic = longHeuristic;
     this->shortHeuristic = shortHeuristic;
     finalSelections = std::vector<SelectionPair>();
     numberOfSelectionCalls = 0;
+//    std::uniform_int_distribution<> sampler(0, TOWER_SIZE - 1);
+//    std::vector<Short> digits;
     std::vector<int> digits = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::unordered_map<SmallInt, float> selections;
+    std::unordered_map<SmallInt, int> selections;
     while (selections.size() < INITIAL_NUMBER_OF_SPLITS) {
         shuffle(digits.begin(), digits.end(), gen);
+//        while (digits.size() < 4) {
+//            int sample = sampler(gen);
+//            if (std::find(digits.begin(), digits.end(), sample) == digits.end()) {
+//                digits.push_back(sample);
+//            }
+//        }
         int hexNum = digits[0] << 12 | digits[1] << 8 | digits[2] << 4 | digits[3];
+//        digits.clear();
         if (selections.find(hexNum) == selections.end()) {
             selections[hexNum] = 0;
         }
     }
     int i = 0;
-    for (auto & selection : selections) {
+    for (auto selection : selections) {
         randomSelections[i++] = selection;
     }
     digits.clear();
 }
 
 std::vector<SelectionPair> Selections::getRandomSelections() {
-    if (numberOfSelectionCalls > CALC_ALL_HEURISTICS_LIMIT)
-        return finalSelections;
-    numberOfSelectionCalls++;
     if (numberOfSelectionCalls < CALC_ALL_HEURISTICS_LIMIT) {
         std::vector<SelectionPair> selectionPairs;
         for (auto & randomSelection : randomSelections) {
@@ -47,13 +54,14 @@ std::vector<SelectionPair> Selections::getRandomSelections() {
         std::sort(allSelections.begin(), allSelections.end(), [](const SelectionKeyValue &a, const SelectionKeyValue &b) {
             return a.second > b.second;
         });
-        int selectedHeuristicsSize = selectedHeuristics.size();
+        size_t selectedHeuristicsSize = selectedHeuristics.size();
         for (int i = 0; i < selectedHeuristicsSize; ++i) {
             finalSelections.push_back(generatePairFromNumber(selectedHeuristics[i]));
         }
         for (size_t i = selectedHeuristicsSize; i < NUMBER_OF_SPLITS; ++i) {
             finalSelections.push_back(generatePairFromNumber(allSelections[i - selectedHeuristicsSize].first));
         }
+        allSelections.clear();
         randomSelections.clear();
         selectedHeuristics.clear();
         return finalSelections;
@@ -73,7 +81,7 @@ SelectionPair Selections::generatePairFromNumber(SmallInt randomSelection) const
 std::vector<Short> Selections::convertNumberToSelection(int number) const {
     std::vector<Short> selection;
     for (int i = 0; i < 4; ++i) {
-        selection.push_back(number & 0b1111);
+        selection.push_back(number & 15);
         number >>= 4;
     }
     return selection;
@@ -108,9 +116,10 @@ Short Selections::getHCost(const Short* stateArray) {
         numberOfSelectionCalls++;
         return hCost;
     }
-    if (numberOfSelectionCalls <= CALC_ALL_HEURISTICS_LIMIT) {
+    if (numberOfSelectionCalls < CALC_ALL_HEURISTICS_LIMIT) {
+        numberOfSelectionCalls++;
         int i = 0;
-        SmallInt selected;
+        int selected = -1;
         for (auto & randomSelection : getRandomSelections()) {
             Short currentHCost = getHCostOfSelection(stateArray, randomSelection);
             randomSelections[i].second += currentHCost;
@@ -118,12 +127,14 @@ Short Selections::getHCost(const Short* stateArray) {
                 selected = randomSelections[i].first;
                 hCost = currentHCost;
             }
+            i++;
         }
-        selectedHeuristics.push_back(selected);
+        if (selected != -1 && std::find(selectedHeuristics.begin(), selectedHeuristics.end(), selected) == selectedHeuristics.end())
+            selectedHeuristics.push_back(selected);
     }
     else {
         #pragma omp parallel for reduction(max:hCost)
-        for (auto &randomSelection: getRandomSelections()) {
+        for (auto &randomSelection: finalSelections) {
             hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));
         }
     }

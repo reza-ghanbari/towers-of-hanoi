@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <omp.h>
 #include <unordered_set>
 #include "../utils/Types.h"
 #include "../utils/Constants.h"
