@@ -2,6 +2,7 @@
 #include <chrono>
 #include "inc/Heuristic.h"
 #include "inc/Solver.h"
+#include "inc/Selections.h"
 
 State* createRoot() {
     auto* state = new Short[TOWER_SIZE]{0};
@@ -25,8 +26,9 @@ int main() {
     auto* smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short.txt");
     auto end = std::chrono::steady_clock::now();
     std::cout << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "s" << std::endl;
+    Selections* selections = new Selections(heuristic, smallHeuristic);
     std::cout << "solving started..." << std::endl;
-    auto* solver = new Solver(createRoot(), heuristic, smallHeuristic);
+    auto* solver = new Solver(createRoot(), selections);
     start = std::chrono::steady_clock::now();
     solver->solve();
     end = std::chrono::steady_clock::now();

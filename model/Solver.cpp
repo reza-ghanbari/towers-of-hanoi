@@ -8,7 +8,7 @@
 void Solver::solve() {
     std::priority_queue<Item, std::vector<Item>, CompareStates> openList;
     std::unordered_map<Long, Long> closedList;
-    openList.emplace(root->getCompressedState(), std::make_pair(0, getHCost(root)));
+    openList.emplace(root->getCompressedState(), std::make_pair(0, selections->getHCost(root->getState())));
     int globalCost = 0;
     Short spaceSize = 12;
     delete root;
@@ -23,7 +23,7 @@ void Solver::solve() {
                 << "   expanded: " << std::setw(spaceSize) << numberOfExpandedStates
                 << " generated: " << std::setw(spaceSize) << numberOfGeneratedStates
                 << std::endl;
-//            if (globalCost >= 70) break;
+            if (globalCost >= 70) break;
         }
         if (current->isGoal()) {
             printPath(currentRank, closedList);
@@ -33,7 +33,7 @@ void Solver::solve() {
             numberOfGeneratedStates++;
             Long childRank = child->getCompressedState();
             closedList[childRank] = currentRank;
-            openList.emplace(childRank, std::make_pair(child->getGCost(), getHCost(child)));
+            openList.emplace(childRank, std::make_pair(child->getGCost(), selections->getHCost(child->getState())));
             delete child;
         }
         delete current;
@@ -53,6 +53,7 @@ State *Solver::getStateFromItem(const Item &currentItem) {
     return current;
 }
 
+/*
 Short Solver::getHCost(State* state) {
     Short* stateArray = state->getState();
     State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
@@ -102,6 +103,7 @@ Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector
     }
     return biggerStateHCost + shortHeuristic->getHeuristicValue(smallerStateArray, numberOfDisksInPegs, topDiskInPegs);
 }
+*/
 
 State *Solver::generateState(Short *state, int numberOfDisks) {
     auto* tempState = new Short[numberOfDisks];
@@ -120,7 +122,7 @@ State *Solver::generateState(Short *state, int numberOfDisks) {
             , numberOfDisks);
 }
 
-std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelection() {
+/*std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelection() {
     std::vector<Short> pool(TOWER_SIZE);
     std::vector<Short> longArray;
     std::vector<Short> shortArray;
@@ -133,7 +135,7 @@ std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelectio
         }
     }
     return std::make_pair(longArray, shortArray);
-}
+}*/
 
 void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList) {
     std::vector<Long> path;

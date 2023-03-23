@@ -79,7 +79,7 @@ std::vector<Short> Selections::convertNumberToSelection(int number) const {
     return selection;
 }
 
-State *Selections::generateState(Short *state, int numberOfDisks) {
+State *Selections::generateState(const Short *state, int numberOfDisks) {
     auto* tempState = new Short[numberOfDisks];
     std::copy(state, state + numberOfDisks, tempState);
     auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
@@ -96,7 +96,7 @@ State *Selections::generateState(Short *state, int numberOfDisks) {
             , numberOfDisks);
 }
 
-Short Selections::getHCost(Short* stateArray) {
+Short Selections::getHCost(const Short* stateArray) {
     State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
     State* lastTwelve = this->generateState(stateArray + REMAINED_SIZE, ABSTRACT_SIZE);
     State* firstFour = this->generateState(stateArray, REMAINED_SIZE);
@@ -104,7 +104,11 @@ Short Selections::getHCost(Short* stateArray) {
     Short hCost = std::max(
             shortHeuristic->getHeuristicValue(firstFour) + longHeuristic->getHeuristicValue(lastTwelve)
             , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));
-    if (numberOfSelectionCalls < CALC_ALL_HEURISTICS_LIMIT) {
+    if (numberOfSelectionCalls == 0) {
+        numberOfSelectionCalls++;
+        return hCost;
+    }
+    if (numberOfSelectionCalls <= CALC_ALL_HEURISTICS_LIMIT) {
         int i = 0;
         SmallInt selected;
         for (auto & randomSelection : getRandomSelections()) {
@@ -117,9 +121,11 @@ Short Selections::getHCost(Short* stateArray) {
         }
         selectedHeuristics.push_back(selected);
     }
-    #pragma omp parallel for reduction(max:hCost)
-    for (auto & randomSelection : getRandomSelections()) {
-        hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));
+    else {
+        #pragma omp parallel for reduction(max:hCost)
+        for (auto &randomSelection: getRandomSelections()) {
+            hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));
+        }
     }
     delete firstTwelve;
     delete lastTwelve;
@@ -129,12 +135,12 @@ Short Selections::getHCost(Short* stateArray) {
 }
 
 inline Short
-Selections::getHCostOfSelection(const Short *stateArray, SelectionPair randomSelection) const {
+Selections::getHCostOfSelection(const Short *stateArray, const SelectionPair& randomSelection) const {
     Short currentElement;
     Short smallerStateArray[REMAINED_SIZE];
     Short biggerStateArray[ABSTRACT_SIZE];
-    std::vector<Short> shorterSelection = randomSelection.second;
-    std::vector<Short> longerSelection = randomSelection.first;
+    std::vector<Short> shorterSelection = randomSelection.first;
+    std::vector<Short> longerSelection = randomSelection.second;
     Short numberOfDisksInPegs[NUMBER_OF_PEGS]{0};
     Short topDiskInPegs[NUMBER_OF_PEGS]{0};
     std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, ABSTRACT_SIZE);

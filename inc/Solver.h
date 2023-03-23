@@ -10,6 +10,7 @@
 #include <random>
 #include <omp.h>
 #include "Heuristic.h"
+#include "Selections.h"
 
 typedef std::pair<Long, std::pair<Short, Short>> Item; // first = state, second.first = gCost, second.second = hCost
 
@@ -28,25 +29,20 @@ private:
     State *root;
     int numberOfExpandedStates;
     int numberOfGeneratedStates;
-    Heuristic<Long> *longHeuristic;
-    Heuristic<SmallInt> *shortHeuristic;
+    Selections *selections;
     std::vector<std::pair<std::vector<Short>, std::vector<Short>>> randomSelections;
     State* generateState(Short* state, int numberOfDisks);
-    Short getHCost(State *state);
-    std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
-    inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
+//    Short getHCost(State *state);
+//    std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
+//    inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
     State *getStateFromItem(const Item &currentItem);
 public:
-    Solver(State *root, Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic)
-        : longHeuristic(longHeuristic)
-        , shortHeuristic(shortHeuristic)
+    Solver(State *root, Selections* selections)
+        : selections(selections)
         , root(root)
         , numberOfExpandedStates(0)
         , numberOfGeneratedStates(1) {
         omp_set_num_threads(NUMBER_OF_THREADS);
-        for (int i = 0; i < NUMBER_OF_SPLITS; ++i) {
-            randomSelections.push_back(generateRandomSelection());
-        }
     };
     void solve();
     void printPath(Long goalRank, std::unordered_map<Long, Long> &closedList);
