@@ -12,22 +12,14 @@ Selections::Selections(Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shor
     this->shortHeuristic = shortHeuristic;
     finalSelections = std::vector<SelectionPair>();
     numberOfSelectionCalls = 0;
-//    std::uniform_int_distribution<> sampler(0, TOWER_SIZE - 1);
-//    std::vector<Short> digits;
     std::vector<int> digits = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     std::random_device rd;
     std::mt19937 gen(rd());
     std::unordered_map<SmallInt, int> selections;
     while (selections.size() < INITIAL_NUMBER_OF_SPLITS) {
-        shuffle(digits.begin(), digits.end(), gen);
-//        while (digits.size() < 4) {
-//            int sample = sampler(gen);
-//            if (std::find(digits.begin(), digits.end(), sample) == digits.end()) {
-//                digits.push_back(sample);
-//            }
-//        }
-        int hexNum = digits[0] << 12 | digits[1] << 8 | digits[2] << 4 | digits[3];
-//        digits.clear();
+        std::shuffle(digits.begin(), digits.end(), gen);
+        std::sort(digits.begin(), digits.begin() + 4);
+        int hexNum = digits[3] << 12 | digits[2] << 8 | digits[1] << 4 | digits[0];
         if (selections.find(hexNum) == selections.end()) {
             selections[hexNum] = 0;
         }
@@ -129,7 +121,8 @@ Short Selections::getHCost(const Short* stateArray) {
             }
             i++;
         }
-        if (selected != -1 && std::find(selectedHeuristics.begin(), selectedHeuristics.end(), selected) == selectedHeuristics.end())
+        if (selected != -1 && numberOfSelectionCalls != CALC_ALL_HEURISTICS_LIMIT
+            && std::find(selectedHeuristics.begin(), selectedHeuristics.end(), selected) == selectedHeuristics.end())
             selectedHeuristics.push_back(selected);
     }
     else {
