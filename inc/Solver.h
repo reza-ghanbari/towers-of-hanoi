@@ -33,7 +33,6 @@ private:
     std::vector<std::pair<std::vector<Short>, std::vector<Short>>> randomSelections;
     State* generateState(Short* state, int numberOfDisks);
     Short getHCost(State *state);
-    Long getCompressedState(const Short state[]);
 
     std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
     inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);

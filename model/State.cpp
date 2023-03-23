@@ -2,6 +2,7 @@
 // Created by reza on 05/03/23.
 //
 
+#include <unordered_map>
 #include "../inc/State.h"
 
 int State::isGoal() {
@@ -43,18 +44,44 @@ Short *State::getNumberOfDisksInPegs() const {
     return numberOfDisksInPegs;
 }
 
-std::vector<State*> State::getChildren() {
+std::vector<State*> State::getChildren(const std::unordered_map<Long, Long> & closeList) {
     std::vector<State*> children;
     for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
         if (topDiskInPegs[i] == totalNumberOfDisks)
             continue;
         for (int j = 0; j < NUMBER_OF_PEGS; ++j) {
             if (i != j && isLegalMove(topDiskInPegs[i], j)) {
-                children.push_back(generateChildState(topDiskInPegs[i], j));
+                Short diskNumber = topDiskInPegs[i];
+                Short currentPeg = state[diskNumber];
+                state[diskNumber] = j;
+                if (closeList.find(getCompressedState(state)) == closeList.end()) {
+                    state[diskNumber] = currentPeg;
+                    children.push_back(generateChildState(diskNumber, j));
+                } else {
+                    state[diskNumber] = currentPeg;
+                }
             }
         }
     }
     return children;
+}
+
+Long State::getCompressedState(const Short state[]) {
+    Long bits = 0;
+    for (int i = 0; i < TOWER_SIZE; i++) {
+        bits <<= 3;
+        bits |= state[i];
+    }
+    return bits;
+}
+
+Long State::getCompressedState() {
+    Long bits = 0;
+    for (int i = 0; i < TOWER_SIZE; i++) {
+        bits <<= 3;
+        bits |= state[i];
+    }
+    return bits;
 }
 
 State* State::generateChildState(Short diskNumber, Short targetPeg) const {
