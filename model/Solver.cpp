@@ -20,15 +20,13 @@ void Solver::solve() {
             std::cout << "Cost: " << globalCost
                 << ", Number of Expanded States: " << numberOfExpandedStates
                 << ", Number of Generated States: " << numberOfGeneratedStates
-                << ", closed list size: " << closedList.size()
                 << ", open list size: " << openList.size() << std::endl;
             if (globalCost >= 70) break;
         }
         if (current->isGoal()) {
-            current->printState();
+            printPath(currentRank, closedList);
             return;
         }
-//        Long currentRank = current->getCompressedState();
         for (State *child : current->getChildren(closedList)) {
             numberOfGeneratedStates++;
             Long childRank = child->getCompressedState();
@@ -133,4 +131,19 @@ std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelectio
         }
     }
     return std::make_pair(longArray, shortArray);
+}
+
+void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList) {
+    std::vector<Long> path;
+    auto rank = goalRank;
+    while ((rank = closedList[rank]) != 0) {
+        path.push_back(goalRank);
+    }
+    path.push_back(0);
+    std::reverse(path.begin(), path.end());
+    for (Long state : path) {
+        State *currentState = getStateFromItem(std::make_pair(state, std::make_pair(0, 0)));
+        currentState->printState();
+        delete currentState;
+    }
 }

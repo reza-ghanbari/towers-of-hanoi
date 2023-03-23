@@ -50,6 +50,7 @@ public:
         }
     };
     void solve();
+    void printPath(Long goalRank, std::unordered_map<Long, Long> &closedList);
 };
 
 
