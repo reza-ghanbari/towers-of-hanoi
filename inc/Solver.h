@@ -30,7 +30,6 @@ private:
     int numberOfGeneratedStates;
     Selections *selections;
     std::vector<std::pair<std::vector<Short>, std::vector<Short>>> randomSelections;
-    State* generateState(Short* state, int numberOfDisks);
     State *getStateFromItem(const Item &currentItem);
 public:
     Solver(State *root, Selections* selections)

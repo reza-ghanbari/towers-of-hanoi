@@ -126,3 +126,17 @@ void State::printState() const {
 Short *State::getTopDiskInPegs() const {
     return topDiskInPegs;
 }
+
+State::State(const Short *stateArray, int numberOfDisks) {
+    totalNumberOfDisks = numberOfDisks;
+    state = new Short[numberOfDisks];
+    numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
+    topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
+    std::copy(stateArray, stateArray + numberOfDisks, state);
+    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
+    for (int i = 0; i <= numberOfDisks - 1; ++i) {
+        numberOfDisksInPegs[state[i]]++;
+        if (topDiskInPegs[state[i]] == numberOfDisks)
+            topDiskInPegs[state[i]] = i;
+    }
+}

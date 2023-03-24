@@ -79,28 +79,11 @@ std::vector<Short> Selections::convertNumberToSelection(int number) const {
     return selection;
 }
 
-State *Selections::generateState(const Short *state, int numberOfDisks) {
-    auto* tempState = new Short[numberOfDisks];
-    std::copy(state, state + numberOfDisks, tempState);
-    auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
-    for (int i = 0; i <= numberOfDisks - 1; ++i) {
-        numberOfDisksInPegs[tempState[i]]++;
-        if (topDiskInPegs[tempState[i]] == numberOfDisks)
-            topDiskInPegs[tempState[i]] = i;
-    }
-    return new State(tempState
-            , numberOfDisksInPegs
-            , topDiskInPegs
-            , numberOfDisks);
-}
-
 Short Selections::getHCost(const Short* stateArray) {
-    State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
-    State* lastTwelve = this->generateState(stateArray + REMAINED_SIZE, ABSTRACT_SIZE);
-    State* firstFour = this->generateState(stateArray, REMAINED_SIZE);
-    State* lastFour = this->generateState(stateArray + ABSTRACT_SIZE, REMAINED_SIZE);
+    auto* firstTwelve = new State(stateArray, ABSTRACT_SIZE);
+    auto* lastTwelve = new State(stateArray + REMAINED_SIZE, ABSTRACT_SIZE);
+    auto* firstFour = new State(stateArray, REMAINED_SIZE);
+    auto* lastFour = new State(stateArray + ABSTRACT_SIZE, REMAINED_SIZE);
     Short hCost = std::max(
             shortHeuristic->getHeuristicValue(firstFour) + longHeuristic->getHeuristicValue(lastTwelve)
             , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));

@@ -23,7 +23,7 @@ void Solver::solve() {
                 << "   expanded: " << std::setw(spaceSize) << numberOfExpandedStates
                 << " generated: " << std::setw(spaceSize) << numberOfGeneratedStates
                 << std::endl;
-//            if (globalCost >= 70) break;
+            if (globalCost >= 70) break;
         }
         if (current->isGoal()) {
             printPath(currentRank, closedList);
@@ -47,27 +47,10 @@ State *Solver::getStateFromItem(const Item &currentItem) {
         stateArray[i] = state & 7;
         state >>= 3;
     }
-    State *current = generateState(stateArray, TOWER_SIZE);
+    auto *current = new State(stateArray, TOWER_SIZE);
     current->setGCost(currentItem.second.first);
     current->setHCost(currentItem.second.second);
     return current;
-}
-
-State *Solver::generateState(Short *state, int numberOfDisks) {
-    auto* tempState = new Short[numberOfDisks];
-    std::copy(state, state + numberOfDisks, tempState);
-    auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
-    for (int i = 0; i <= numberOfDisks - 1; ++i) {
-        numberOfDisksInPegs[tempState[i]]++;
-        if (topDiskInPegs[tempState[i]] == numberOfDisks)
-            topDiskInPegs[tempState[i]] = i;
-    }
-    return new State(tempState
-            , numberOfDisksInPegs
-            , topDiskInPegs
-            , numberOfDisks);
 }
 
 void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList) {

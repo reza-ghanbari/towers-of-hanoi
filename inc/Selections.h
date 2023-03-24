@@ -28,7 +28,6 @@ private:
     SelectionPair generatePairFromNumber(SmallInt randomSelection) const;
     std::vector<SelectionPair> getRandomSelections();
     Short getHCostOfSelection(const Short *stateArray, const SelectionPair& randomSelection) const;
-    State *generateState(const Short *state, int numberOfDisks);
     std::vector<Short> convertNumberToSelection(int number) const;
 public:
     Selections(Heuristic<Long> *longHeuristic, Heuristic<SmallInt> *shortHeuristic);

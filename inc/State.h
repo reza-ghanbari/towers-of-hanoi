@@ -27,6 +27,7 @@ public:
         , numberOfDisksInPegs(numberOfDisksInPegs)
         , topDiskInPegs(topDiskInPegs)
         , totalNumberOfDisks(totalNumberOfDisks) {}
+    State(const Short *state, int numberOfDisks);
     ~State();
     Short* getState() const;
     int isGoal();
