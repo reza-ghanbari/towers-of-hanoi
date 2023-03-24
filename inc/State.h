@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <unordered_set>
 #include "../utils/Types.h"
 #include "../utils/Constants.h"
 
@@ -39,12 +40,8 @@ public:
     Short* getNumberOfDisksInPegs() const;
     Short* getTopDiskInPegs() const;
     std::vector<State *> getChildren(const std::unordered_map<Long, Long> & closeList = std::unordered_map<Long, Long>());
-    [[nodiscard]] int getNumberOfPegsWithDisks() const;
     State *generateChildState(Short diskNumber, Short targetPeg) const;
     void printState() const;
-
-    Long getCompressedState(const Short *state);
-
     Long getCompressedState();
 };
 

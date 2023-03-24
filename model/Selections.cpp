@@ -87,11 +87,7 @@ Short Selections::getHCost(const Short* stateArray) {
     Short hCost = std::max(
             shortHeuristic->getHeuristicValue(firstFour) + longHeuristic->getHeuristicValue(lastTwelve)
             , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));
-    if (numberOfSelectionCalls == 0) {
-        numberOfSelectionCalls++;
-        return hCost;
-    }
-    if (numberOfSelectionCalls < CALC_ALL_HEURISTICS_LIMIT) {
+    if (numberOfSelectionCalls < CALC_ALL_HEURISTICS_LIMIT) [[unlikely]] {
         numberOfSelectionCalls++;
         int i = 0;
         int selected = -1;
@@ -108,7 +104,7 @@ Short Selections::getHCost(const Short* stateArray) {
             && std::find(selectedHeuristics.begin(), selectedHeuristics.end(), selected) == selectedHeuristics.end())
             selectedHeuristics.push_back(selected);
     }
-    else {
+    else [[likely]] {
         #pragma omp parallel for reduction(max:hCost)
         for (auto &randomSelection: finalSelections) {
             hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));

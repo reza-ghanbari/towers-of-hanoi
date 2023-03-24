@@ -17,7 +17,7 @@ void Solver::solve() {
         State *current = getStateFromItem(openList.top());
         openList.pop();
         numberOfExpandedStates++;
-        if (current->getCost() != globalCost) {
+        if (current->getCost() != globalCost) [[unlikely]] {
             globalCost = current->getCost();
             std::cout << std::left << "cost: " << globalCost
                 << "   expanded: " << std::setw(spaceSize) << numberOfExpandedStates
@@ -25,7 +25,7 @@ void Solver::solve() {
                 << std::endl;
             if (globalCost >= 70) break;
         }
-        if (current->isGoal()) {
+        if (current->isGoal()) [[unlikely]] {
             printPath(currentRank, closedList);
             return;
         }
