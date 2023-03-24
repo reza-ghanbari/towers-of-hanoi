@@ -31,9 +31,6 @@ private:
     Selections *selections;
     std::vector<std::pair<std::vector<Short>, std::vector<Short>>> randomSelections;
     State* generateState(Short* state, int numberOfDisks);
-//    Short getHCost(State *state);
-//    std::pair<std::vector<Short>, std::vector<Short>> generateRandomSelection();
-//    inline Short getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection);
     State *getStateFromItem(const Item &currentItem);
 public:
     Solver(State *root, Selections* selections)

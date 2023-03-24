@@ -53,58 +53,6 @@ State *Solver::getStateFromItem(const Item &currentItem) {
     return current;
 }
 
-/*
-Short Solver::getHCost(State* state) {
-    Short* stateArray = state->getState();
-    State* firstTwelve = this->generateState(stateArray, ABSTRACT_SIZE);
-    State* lastTwelve = this->generateState(stateArray + REMAINED_SIZE, ABSTRACT_SIZE);
-    State* firstFour = this->generateState(stateArray, REMAINED_SIZE);
-    State* lastFour = this->generateState(stateArray + ABSTRACT_SIZE, REMAINED_SIZE);
-    Short hCost = std::max(
-            shortHeuristic->getHeuristicValue(firstFour) + longHeuristic->getHeuristicValue(lastTwelve)
-            , longHeuristic->getHeuristicValue(firstTwelve) + shortHeuristic->getHeuristicValue(lastFour));
-    #pragma omp parallel for reduction(max:hCost)
-    for (auto & randomSelection : randomSelections) {
-        hCost = std::max(hCost, getHCostOfSelection(stateArray, randomSelection));
-    }
-    delete firstTwelve;
-    delete lastTwelve;
-    delete firstFour;
-    delete lastFour;
-    return hCost;
-}
-
-inline Short
-Solver::getHCostOfSelection(const Short *stateArray, const std::pair<std::vector<Short>, std::vector<Short>> &randomSelection) {
-    Short currentElement;
-    Short smallerStateArray[REMAINED_SIZE];
-    Short biggerStateArray[ABSTRACT_SIZE];
-    std::vector<Short> shorterSelection = randomSelection.second;
-    std::vector<Short> longerSelection = randomSelection.first;
-    Short numberOfDisksInPegs[NUMBER_OF_PEGS]{0};
-    Short topDiskInPegs[NUMBER_OF_PEGS]{0};
-    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, ABSTRACT_SIZE);
-    for (int i = 0; i < ABSTRACT_SIZE; ++i) {
-        currentElement = stateArray[longerSelection[i]];
-        biggerStateArray[i] = currentElement;
-        numberOfDisksInPegs[currentElement]++;
-        if (topDiskInPegs[currentElement] == ABSTRACT_SIZE)
-            topDiskInPegs[currentElement] = i;
-    }
-    Short biggerStateHCost = longHeuristic->getHeuristicValue(biggerStateArray, numberOfDisksInPegs, topDiskInPegs);
-    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, REMAINED_SIZE);
-    std::fill(numberOfDisksInPegs, numberOfDisksInPegs + NUMBER_OF_PEGS, 0);
-    for (int i = 0; i < REMAINED_SIZE; ++i) {
-        currentElement = stateArray[shorterSelection[i]];
-        smallerStateArray[i] = currentElement;
-        numberOfDisksInPegs[currentElement]++;
-        if (topDiskInPegs[currentElement] == REMAINED_SIZE)
-            topDiskInPegs[currentElement] = i;
-    }
-    return biggerStateHCost + shortHeuristic->getHeuristicValue(smallerStateArray, numberOfDisksInPegs, topDiskInPegs);
-}
-*/
-
 State *Solver::generateState(Short *state, int numberOfDisks) {
     auto* tempState = new Short[numberOfDisks];
     std::copy(state, state + numberOfDisks, tempState);
@@ -121,21 +69,6 @@ State *Solver::generateState(Short *state, int numberOfDisks) {
             , topDiskInPegs
             , numberOfDisks);
 }
-
-/*std::pair<std::vector<Short>, std::vector<Short>> Solver::generateRandomSelection() {
-    std::vector<Short> pool(TOWER_SIZE);
-    std::vector<Short> longArray;
-    std::vector<Short> shortArray;
-    for (int i = 0; i < TOWER_SIZE; i++)
-        pool[i] = i;
-    std::sample(pool.begin(), pool.end(), std::back_inserter(longArray), ABSTRACT_SIZE, std::mt19937(std::random_device()()));
-    for (int number : pool) {
-        if (std::find(longArray.begin(), longArray.end(), number) == longArray.end()) {
-            shortArray.push_back(number);
-        }
-    }
-    return std::make_pair(longArray, shortArray);
-}*/
 
 void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList) {
     std::vector<Long> path;
