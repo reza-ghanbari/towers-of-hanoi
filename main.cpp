@@ -22,8 +22,15 @@ State* createRoot() {
 int main() {
     std::cout << "pdb creating started..." << std::endl;
     auto start = std::chrono::steady_clock::now();
-    auto* heuristic = new Heuristic<Long>(ABSTRACT_SIZE, "pdb-long-mid-goal.txt");
-    auto* smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short-mid-goal.txt");
+    Heuristic<Long>* heuristic;
+    Heuristic<SmallInt>* smallHeuristic;
+    if (READ_PDB) {
+        heuristic = new Heuristic<Long>(ABSTRACT_SIZE, "pdb-long-all-center.txt");
+        smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short-all-center.txt");
+    } else {
+        heuristic = new Heuristic<Long>(ABSTRACT_SIZE);
+        smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE);
+    }
     auto end = std::chrono::steady_clock::now();
     std::cout << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "s" << std::endl;
     Selections* selections = new Selections(heuristic, smallHeuristic);
@@ -33,7 +40,9 @@ int main() {
     solver->solve();
     end = std::chrono::steady_clock::now();
     std::cout << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "s" << std::endl;
-//    heuristic->saveToFile("pdb-long-mid-goal.txt");
-//    smallHeuristic->saveToFile("pdb-short-mid-goal.txt");
+    if (SAVE_PDB) {
+        heuristic->saveToFile("pdb-long.txt");
+        smallHeuristic->saveToFile("pdb-short.txt");
+    }
     return 0;
 }
