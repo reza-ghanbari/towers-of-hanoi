@@ -26,7 +26,6 @@ void Solver::solve() {
 //            if (globalCost >= 70) break;
         }
         if (current->isGoal()) [[unlikely]] {
-            std::cout << "Goal found! in g-cost " << current->getGCost() << std::endl;
             printPath(currentRank, closedList);
             return;
         }
@@ -60,6 +59,7 @@ void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList
     while ((rank = closedList[rank]) != 0) {
         path.push_back(rank);
     }
+    std::vector<State*> states;
     path.push_back(0);
     std::reverse(path.begin(), path.end());
     std::cout << "Solution found in length: " << path.size() << std::endl;
@@ -67,6 +67,23 @@ void Solver::printPath(Long goalRank, std::unordered_map<Long, Long> &closedList
     for (Long state : path) {
         State *currentState = getStateFromItem(std::make_pair(state, std::make_pair(0, 0)));
         currentState->printState();
-        delete currentState;
+        if (IS_MID_POINT_PDB) {
+            states.push_back(currentState);
+        } else {
+            delete currentState;
+        }
     }
+    if (IS_MID_POINT_PDB) {
+        for (int i = states.size() - 1; i >= 0; --i) {
+            Short* stateArray = states[i]->getState();
+            for (int j = 0; j < TOWER_SIZE; ++j) {
+                if (stateArray[j] == 0) stateArray[j] = NUMBER_OF_PEGS - 1;
+                else if (stateArray[j] == NUMBER_OF_PEGS - 1) stateArray[j] = 0;
+            }
+            State* symmetricState = new State(stateArray, TOWER_SIZE);
+            symmetricState->printState();
+            delete symmetricState;
+        }
+    }
+    states.clear();
 }

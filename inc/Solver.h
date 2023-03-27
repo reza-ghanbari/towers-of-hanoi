@@ -19,7 +19,7 @@ public:
         Short lhsCost = lhs.second.first + lhs.second.second;
         Short rhsCost = rhs.second.first + rhs.second.second;
         return (lhsCost > rhsCost)
-            || (lhsCost == rhsCost && lhs.second.first > rhs.second.first);
+            || (lhsCost == rhsCost && (IS_MID_POINT_PDB ? (lhs.second.first < rhs.second.first) : (lhs.second.first > rhs.second.first)));
     }
 };
 
