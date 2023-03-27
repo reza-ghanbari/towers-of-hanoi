@@ -67,7 +67,7 @@ void Heuristic<T>::createAllGoals(Short* array, int index) {
         createAllGoals(array, index + 1);
     }
     else {
-        for (int i = 0; i < NUMBER_OF_PEGS; i++) {
+        for (int i = 1; i < NUMBER_OF_PEGS - 1; i++) {
             array[index] = i;
             createAllGoals(array, index + 1);
         }
