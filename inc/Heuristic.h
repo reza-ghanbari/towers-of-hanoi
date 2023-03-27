@@ -15,6 +15,7 @@ template <typename T>
 class Heuristic {
 private:
     std::unordered_map<T, Short> PDB;
+    std::queue<T> queue;
     int numberOfDisks;
     void createPDB();
     void getMappingForSymmetry(Short* mapping, const Short* numberOfDisksInPegs, const Short* topDiskInPegs);
@@ -28,6 +29,7 @@ public:
     State *getUnrankedState(T rank);
     Short getHeuristicValue(State *state);
     void readFromFile(const std::string &filename);
+    void createAllGoals(Short *array, int index);
 };
 
 

@@ -52,21 +52,49 @@ T Heuristic<T>::convertStateToInt(const Short state[], const Short mapping[]) {
 }
 
 template <typename T>
+void Heuristic<T>::createAllGoals(Short* array, int index) {
+    if (index == numberOfDisks) {
+        auto* possibleGoal = new State(array, numberOfDisks);
+        T rank = getRank(possibleGoal);
+        if (PDB.find(rank) == PDB.end()) {
+            PDB[rank] = 0;
+            queue.push(rank);
+        }
+        delete possibleGoal;
+    }
+    else if (index == numberOfDisks - 1) {
+        array[index] = NUMBER_OF_PEGS - 1;
+        createAllGoals(array, index + 1);
+    }
+    else {
+        for (int i = 0; i < NUMBER_OF_PEGS; i++) {
+            array[index] = i;
+            createAllGoals(array, index + 1);
+        }
+    }
+}
+
+template <typename T>
 void Heuristic<T>::createPDB() {
-    std::queue<T> queue;
-    auto* goalState = new Short[numberOfDisks]{0};
-    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS];
-    auto* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    std::fill(goalState, goalState + numberOfDisks, NUMBER_OF_PEGS - 1);
-    std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
-    goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = numberOfDisks;
-    auto *root = new State(goalState
-            , goalNumberOfDisksInPegs
-            , topDiskInPegs
-            , numberOfDisks);
-    T rootRank = getRank(root);
-    queue.push(rootRank);
-    PDB[rootRank] = 0;
+    if (IS_MID_POINT_PDB) {
+        auto *array = new Short[numberOfDisks];
+        createAllGoals(array, 0);
+    } else {
+        auto* goalState = new Short[numberOfDisks]{0};
+        auto* topDiskInPegs = new Short[NUMBER_OF_PEGS];
+        auto* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
+        std::fill(goalState, goalState + numberOfDisks, NUMBER_OF_PEGS - 1);
+        std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
+        goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = numberOfDisks;
+        auto *root = new State(goalState
+                , goalNumberOfDisksInPegs
+                , topDiskInPegs
+                , numberOfDisks);
+        T rootRank = getRank(root);
+        queue.push(rootRank);
+        PDB[rootRank] = 0;
+    }
+    std::cout << "Goal generation finished, added " << PDB.size() << " unique goals , creating the rest of the PDB..." << std::endl;
     while (!queue.empty()) {
         T currentRank = queue.front();
         State *current = getUnrankedState(currentRank);
@@ -81,7 +109,7 @@ void Heuristic<T>::createPDB() {
         }
         delete current;
     }
-    delete root;
+//    delete root;
 }
 
 template <typename T>

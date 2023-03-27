@@ -23,9 +23,10 @@ void Solver::solve() {
                 << "   expanded: " << std::setw(spaceSize) << numberOfExpandedStates
                 << " generated: " << std::setw(spaceSize) << numberOfGeneratedStates
                 << std::endl;
-            if (globalCost >= 70) break;
+//            if (globalCost >= 70) break;
         }
         if (current->isGoal()) [[unlikely]] {
+            std::cout << "Goal found! in g-cost " << current->getGCost() << std::endl;
             printPath(currentRank, closedList);
             return;
         }

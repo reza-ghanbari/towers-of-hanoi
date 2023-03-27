@@ -6,8 +6,8 @@
 #include "../inc/State.h"
 
 int State::isGoal() {
-//    return state[totalNumberOfDisks - 1] == NUMBER_OF_PEGS - 1;
-    return numberOfDisksInPegs[NUMBER_OF_PEGS - 1] == totalNumberOfDisks;
+    return state[totalNumberOfDisks - 1] == NUMBER_OF_PEGS - 1;
+//    return numberOfDisksInPegs[NUMBER_OF_PEGS - 1] == totalNumberOfDisks;
 }
 
 State::~State() {
