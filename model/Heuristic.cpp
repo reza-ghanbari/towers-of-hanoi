@@ -63,8 +63,14 @@ void Heuristic<T>::createAllGoals(Short* array, int index) {
         delete possibleGoal;
     }
     else if (index == numberOfDisks - 1) {
-        array[index] = NUMBER_OF_PEGS - 1;
-        createAllGoals(array, index + 1);
+        for (int i = 0; i < NUMBER_OF_PEGS; ++i) {
+            array[index] = i;
+            createAllGoals(array, index + 1);
+        }
+//        array[index] = NUMBER_OF_PEGS - 1;
+//        createAllGoals(array, index + 1);
+//        array[index] = 0;
+//        createAllGoals(array, index + 1);
     }
     else {
         for (int i = 1; i < NUMBER_OF_PEGS - 1; i++) {
@@ -165,18 +171,22 @@ void Heuristic<T>::getMappingForSymmetry(Short *mapping, const Short *numberOfDi
     Short zero = 0, one = 1, two = 2, three = 3;
     Short first = numberOfDisksInPegs[zero];
     Short second = numberOfDisksInPegs[one];
-    if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[one])) {
-        std::swap(zero, one);
+    if (!IS_MID_POINT_PDB) {
+        if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[one])) {
+            std::swap(zero, one);
+        }
     }
     first = numberOfDisksInPegs[two];
     second = numberOfDisksInPegs[three];
     if (first < second || (first == second && topDiskInPegs[two] < topDiskInPegs[three])) {
         std::swap(two, three);
     }
-    first = numberOfDisksInPegs[zero];
-    second = numberOfDisksInPegs[two];
-    if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[two])) {
-        std::swap(zero, two);
+    if (!IS_MID_POINT_PDB) {
+        first = numberOfDisksInPegs[zero];
+        second = numberOfDisksInPegs[two];
+        if (first < second || (first == second && topDiskInPegs[zero] < topDiskInPegs[two])) {
+            std::swap(zero, two);
+        }
     }
     first = numberOfDisksInPegs[one];
     second = numberOfDisksInPegs[three];
