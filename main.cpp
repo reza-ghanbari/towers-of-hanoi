@@ -6,15 +6,8 @@
 
 State* createRoot() {
     auto* state = new Short[TOWER_SIZE]{0};
-    auto* numberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
-    numberOfDisksInPegs[0] = TOWER_SIZE;
-    auto* topDiskInPegs = new Short[NUMBER_OF_PEGS]{0};
-    for (int i = 1; i < NUMBER_OF_PEGS; ++i)
-        topDiskInPegs[i] = TOWER_SIZE;
-    State* root = new State(state
-            , numberOfDisksInPegs
-            , topDiskInPegs
-            , TOWER_SIZE);
+    auto* root = new State(state, TOWER_SIZE);
+    delete[] state;
     root->setGCost(0);
     return root;
 }
@@ -25,8 +18,8 @@ int main() {
     Heuristic<Long>* heuristic;
     Heuristic<SmallInt>* smallHeuristic;
     if (READ_PDB) {
-        heuristic = new Heuristic<Long>(ABSTRACT_SIZE, "pdb-long-all-center.txt");
-        smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short-all-center.txt");
+        heuristic = new Heuristic<Long>(ABSTRACT_SIZE, "pdb-long.txt");
+        smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE, "pdb-short.txt");
     } else {
         heuristic = new Heuristic<Long>(ABSTRACT_SIZE);
         smallHeuristic = new Heuristic<SmallInt>(REMAINED_SIZE);

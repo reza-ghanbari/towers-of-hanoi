@@ -81,18 +81,13 @@ void Heuristic<T>::createPDB() {
         createAllGoals(array, 0);
     } else {
         auto* goalState = new Short[numberOfDisks]{0};
-        auto* topDiskInPegs = new Short[NUMBER_OF_PEGS];
-        auto* goalNumberOfDisksInPegs = new Short[NUMBER_OF_PEGS]{0};
         std::fill(goalState, goalState + numberOfDisks, NUMBER_OF_PEGS - 1);
-        std::fill(topDiskInPegs, topDiskInPegs + NUMBER_OF_PEGS, numberOfDisks);
-        goalNumberOfDisksInPegs[NUMBER_OF_PEGS - 1] = numberOfDisks;
-        auto *root = new State(goalState
-                , goalNumberOfDisksInPegs
-                , topDiskInPegs
-                , numberOfDisks);
+        auto *root = new State(goalState, numberOfDisks);
         T rootRank = getRank(root);
         queue.push(rootRank);
         PDB[rootRank] = 0;
+        delete root;
+        delete[] goalState;
     }
     std::cout << "Goal generation finished, added " << PDB.size() << " unique goals , creating the rest of the PDB..." << std::endl;
     while (!queue.empty()) {
@@ -109,7 +104,6 @@ void Heuristic<T>::createPDB() {
         }
         delete current;
     }
-//    delete root;
 }
 
 template <typename T>
