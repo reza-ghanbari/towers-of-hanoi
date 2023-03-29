@@ -7,7 +7,7 @@
 
 int State::isGoal() {
     if (IS_MID_POINT_PDB)
-        return state[totalNumberOfDisks - 1] == NUMBER_OF_PEGS - 1;
+        return state[totalNumberOfDisks - 1] != 0;
     else
         return numberOfDisksInPegs[NUMBER_OF_PEGS - 1] == totalNumberOfDisks;
 }
